@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:sa3dni_app/shared/constData.dart';
 
-const textInputField = InputDecoration(
+var textInputField = InputDecoration(
     hintText:  'Email',
     filled: true,
-    fillColor: Colors.white,
+    fillColor: Color(0xFFDAEFEF),
     enabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.white,width: 1.0)
+        borderSide: BorderSide(color: Color(0xFFDAEFEF),width: 1.0)
     ),
     focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: Color(0xFFB0E4F1))
+        borderSide: BorderSide(color: ConstData().basicColor)
     )
 );

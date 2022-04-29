@@ -35,33 +35,29 @@ class _ChatPageState extends State<ChatPage> {
                 patientId: doc['patientId'],
                 status: doc['status'],
                 id: doc['id']));
+            FirebaseFirestore.instance
+                .collection('organization')
+                .get()
+                .then((QuerySnapshot querySnapshot) {
+              for (var doc in querySnapshot.docs) {
+                setState(() {
+                  organizations.add(
+                    // address , category , email , name , phoneNumber , rate
+                      Organization(name: doc['name'],
+                          phoneNumber: doc['phoneNumber'],
+                          address: doc['address'],
+                          category: Category(name: doc['category']),
+                          email: doc['email'],
+                          id: doc['id'],
+                          image: doc['image']));
+                });
+              }
+            });
           });
         }
       }});
 
-    Future.delayed(const Duration(seconds: 3),(){
-      if(requests.isNotEmpty){
-        FirebaseFirestore.instance
-            .collection('organization')
-            .get()
-            .then((QuerySnapshot querySnapshot) {
-          for (var doc in querySnapshot.docs) {
-            setState(() {
-              organizations.add(
-                // address , category , email , name , phoneNumber , rate
-                  Organization(name: doc['name'],
-                      phoneNumber: doc['phoneNumber'],
-                      address: doc['address'],
-                      category: Category(name: doc['category']),
-                      email: doc['email'],
-                      id: doc['id'],
-                      image: doc['image']));
-            });
-          }
-        });
-      }
 
-    });
 
   }
 

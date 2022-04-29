@@ -7,7 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:sa3dni_app/shared/constData.dart';
 
 class EventList extends StatefulWidget {
-  const EventList({Key? key}) : super(key: key);
+  String id;
+   EventList({Key? key,required this.id}) : super(key: key);
 
   @override
   State<EventList> createState() => _EventListState();
@@ -25,11 +26,11 @@ class _EventListState extends State<EventList> {
         .get()
         .then((QuerySnapshot querySnapshot) {
       for (var doc in querySnapshot.docs) {
-        if (doc["organizationID"].toString().contains(currentUser!.uid)) {
+        if (doc["organizationID"].toString().contains(widget.id)) {
           setState(() {
             String time = doc['time'].toString().substring(11, 15);
             events.add(OrganizationEvent(
-                organizationID: currentUser!.uid,
+                organizationID: widget.id,
                 title: doc['title'],
                 date: DateFormat.yMd().parse(doc['date']),
                 time: TimeOfDay(

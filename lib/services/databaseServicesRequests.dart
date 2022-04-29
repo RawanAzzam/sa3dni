@@ -27,18 +27,7 @@ try{
 
   }
 
-  Future addId(String patientId, String organizationID,String status ,String id) async{
-    return await FirebaseFirestore.instance.collection('requests')
-         .doc(id)
-        .update({
-      'patientId': patientId,
-      'organizationID': organizationID,
-      'status' : status,
-      'id':id
-    }
 
-    );
-  }
 
   Future<String> getStatus(String patientID , String organizationID) async {
     await requestCollection

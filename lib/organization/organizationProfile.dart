@@ -1,13 +1,10 @@
-import 'dart:ffi';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:sa3dni_app/models/event.dart';
 import 'package:sa3dni_app/models/organization.dart';
 import 'package:sa3dni_app/models/request.dart';
 import 'package:sa3dni_app/organization/eventList.dart';
 import 'package:sa3dni_app/organization/requestList.dart';
-import 'package:sa3dni_app/services/DatabaseServiceOrga.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sa3dni_app/shared/constData.dart';
@@ -15,7 +12,8 @@ import 'package:sa3dni_app/shared/constData.dart';
 import '../models/category.dart';
 
 class OrganizationProfile extends StatefulWidget {
-  OrganizationProfile({Key? key}) : super(key: key);
+
+  const OrganizationProfile({Key? key}) : super(key: key);
 
   @override
   State<OrganizationProfile> createState() => _OrganizationProfileState();
@@ -29,7 +27,7 @@ class _OrganizationProfileState extends State<OrganizationProfile> {
   final currentUser = FirebaseAuth.instance.currentUser;
   int eventCount = 0;
   int requestCount = 0;
-  List<Request> requests = <Request>[];
+  int appointmentRequestCount = 0;
   @override
   void initState() {
     super.initState();
@@ -77,6 +75,20 @@ class _OrganizationProfileState extends State<OrganizationProfile> {
             && doc['status'].toString().contains('waiting')) {
           setState(() {
            requestCount++;
+          });
+        }
+      }
+    });
+
+    FirebaseFirestore.instance
+        .collection('appointments')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      for (var doc in querySnapshot.docs) {
+        if (doc["organizationId"].toString().contains(currentUser!.uid)
+            && doc['status'].toString().contains('waiting')) {
+          setState(() {
+            appointmentRequestCount++;
           });
         }
       }
@@ -214,7 +226,7 @@ class _OrganizationProfileState extends State<OrganizationProfile> {
                       ],
                     ),
                     onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const EventList()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) =>  EventList(id: currentUser!.uid,)));
 
                     },
                   ),
@@ -224,13 +236,27 @@ class _OrganizationProfileState extends State<OrganizationProfile> {
               GestureDetector(
                 child: Column(
                   children: [
-                    const Text("Request",style: TextStyle(fontSize: 17,fontWeight: FontWeight.bold),),
+                    const Text("Connection Request",style: TextStyle(fontSize: 17,fontWeight: FontWeight.bold),),
                     const SizedBox(height: 15,),
                     Text(requestCount.toString(),style: const TextStyle(fontSize: 15),),
                   ],
                 ),
                 onTap: (){
                   Navigator.push(context, MaterialPageRoute(builder: (context) => const RequestList()));
+
+                },
+              ),
+              SizedBox(height: 20,),
+              GestureDetector(
+                child: Column(
+                  children: [
+                    const Text("Appointment Request",style: TextStyle(fontSize: 17,fontWeight: FontWeight.bold),),
+                    const SizedBox(height: 15,),
+                    Text(appointmentRequestCount.toString(),style: const TextStyle(fontSize: 15),),
+                  ],
+                ),
+                onTap: (){
+               //   Navigator.push(context, MaterialPageRoute(builder: (context) => const RequestList()));
 
                 },
               ),

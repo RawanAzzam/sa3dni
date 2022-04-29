@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sa3dni_app/models/category.dart';
 import 'package:sa3dni_app/models/organization.dart';
+import 'package:sa3dni_app/patient/viewOrganizationProfile.dart';
 import 'package:sa3dni_app/services/databaseServicesRequests.dart';
 import 'package:sa3dni_app/shared/constData.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -28,39 +28,9 @@ class _OrganizationListState extends State<OrganizationList> {
   void initState()  {
     super.initState();
      getPatient();
-    Future.delayed(const Duration(seconds: 3),(){
-
-      FirebaseFirestore.instance
-          .collection('organization')
-          .get()
-          .then((QuerySnapshot querySnapshot) {
-        for (var doc in querySnapshot.docs) {
-          try{
-            if(_patient.category.name.contains(doc['category'])){
-              setState(() {
-                organizations.add(
-                  // address , category , email , name , phoneNumber , rate
-                    Organization(name: doc['name'],
-                        phoneNumber: doc['phoneNumber'],
-                        address: doc['address'],
-                        category: Category(name: doc['category']),
-                        email: doc['email'],
-                        id: doc['id'],
-                        image: doc['image']));
-              });
-            }
-          }catch(e){
-
-          }
-
-        }
-      });
-    });
-
-   changeStatus();
+     changeStatus();
 
   }
-
   void getPatient() {
     FirebaseFirestore.instance
         .collection('patients')
@@ -73,6 +43,31 @@ class _OrganizationListState extends State<OrganizationList> {
                 email: doc['email'],
                 category: Category(name:doc['category']),
                 id: doc['id']);
+            FirebaseFirestore.instance
+                .collection('organization')
+                .get()
+                .then((QuerySnapshot querySnapshot) {
+              for (var doc in querySnapshot.docs) {
+                try{
+                  if(_patient.category.name.contains(doc['category'])){
+                    setState(() {
+                      organizations.add(
+                        // address , category , email , name , phoneNumber , rate
+                          Organization(name: doc['name'],
+                              phoneNumber: doc['phoneNumber'],
+                              address: doc['address'],
+                              category: Category(name: doc['category']),
+                              email: doc['email'],
+                              id: doc['id'],
+                              image: doc['image']));
+                    });
+                  }
+                }catch(e){
+
+                }
+
+              }
+            });
           });
         }
       }
@@ -156,27 +151,45 @@ class _OrganizationListState extends State<OrganizationList> {
                                 ),
 
                             ),
-                            FlatButton.icon(
-                                onPressed: () async {
-                                  if(getStatus(userData.id).contains('nothing')
-                                  || getStatus(userData.id).contains('rejected')) {
-                                   await DatabaseServicesRequests().
-                                    addRequest(currentUser!.uid, userData.id);
-                                   changeStatus();
-                                  }else if(getStatus(userData.id).contains('waiting')){
-                                    await DatabaseServicesRequests().
-                                     deleteRequest(getId(userData.id));
-                                    changeStatus();
-                                  }
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                FlatButton.icon(
+                                    onPressed: () async {
+                                      if(getStatus(userData.id).contains('nothing')
+                                      || getStatus(userData.id).contains('rejected')) {
+                                       await DatabaseServicesRequests().
+                                        addRequest(currentUser!.uid, userData.id);
+                                       changeStatus();
+                                      }else if(getStatus(userData.id).contains('waiting')){
+                                        await DatabaseServicesRequests().
+                                         deleteRequest(getId(userData.id));
+                                        changeStatus();
+                                      }
 
-                                },
-                                icon:
-                                Icon( getStatus(userData.id).contains('waiting') ?
-                                Icons.cancel : getStatus(userData.id).contains('accepted') ?
-                                Icons.person : Icons.group_add),
-                                label: Text(getStatus(userData.id).contains('waiting') ?
-                                'cancel' : getStatus(userData.id).contains('accepted') ?
-                                'Following' : 'request')),
+                                    },
+                                    icon:
+                                    Icon( getStatus(userData.id).contains('waiting') ?
+                                    Icons.cancel : getStatus(userData.id).contains('accepted') ?
+                                    Icons.person : Icons.group_add,color: Colors.blue,),
+                                    label: Text(getStatus(userData.id).contains('waiting') ?
+                                    'cancel' : getStatus(userData.id).contains('accepted') ?
+                                    'Following' : 'request')),
+                                SizedBox(width: 15,),
+                                FlatButton.icon(
+                                    onPressed: () async {
+
+                                      Navigator.of(context).push(MaterialPageRoute(
+                                        builder: (context) =>   ViewOrganizationProfile(organization:organizations[index],
+                                          status: getStatus(userData.id) ),
+                                      ));
+                                    },
+                                    icon:const Icon(  Icons.account_circle,color: Colors.red,)
+                                  ,
+                                    label: const Text('View Profile'),
+                                )
+                              ],
+                            ),
                             Divider(color: ConstData().basicColor,
                               height: 20.0,
                               endIndent: 30.0,

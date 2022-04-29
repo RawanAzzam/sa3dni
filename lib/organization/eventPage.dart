@@ -23,6 +23,10 @@ class _EventPageState extends State<EventPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: ConstData().basicColor,
+        title: Text('Add Event'),
+      ),
       body: Padding(
           padding: const EdgeInsets.all(25.0),
           child: Form(
