@@ -8,6 +8,7 @@ class Appointment{
   String phoneNumber;
   String email;
   String patientName;
+  late String note;
   late DateTime date;
   late TimeOfDay time;
   late Category category;
@@ -26,7 +27,8 @@ class Appointment{
     required this.time,
     required this.date,
     required this.docId,
-    required this.status
+    required this.status,
+    required this.note
   }
       );
 
@@ -34,6 +36,7 @@ class Appointment{
   {
     required this.patientId,
     required this.organizationId,
+    required this.organizationName,
     required this.phoneNumber,
     required this.email,
     required this.patientName,

@@ -29,7 +29,7 @@ class SelectPage extends StatelessWidget {
                       ]
                   ),
                   onTap: (){
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SelectCategory(isPatient: true)));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => SelectCategory(isPatient: true)));
 
                   },
                 ),
@@ -45,7 +45,7 @@ class SelectPage extends StatelessWidget {
                       ]
                   ),
                   onTap: (){
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SelectCategory(isPatient: false)));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => SelectCategory(isPatient: false)));
                   },
                 ),
 

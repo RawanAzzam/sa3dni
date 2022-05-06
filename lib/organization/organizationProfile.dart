@@ -25,9 +25,8 @@ class _OrganizationProfileState extends State<OrganizationProfile> {
   double rate = 0.0;
   String image = '';
   final currentUser = FirebaseAuth.instance.currentUser;
-  int eventCount = 0;
-  int requestCount = 0;
-  int appointmentRequestCount = 0;
+
+
   @override
   void initState() {
     super.initState();
@@ -66,46 +65,10 @@ class _OrganizationProfileState extends State<OrganizationProfile> {
       }
     });
 
-    FirebaseFirestore.instance
-        .collection('requests')
-        .get()
-        .then((QuerySnapshot querySnapshot) {
-      for (var doc in querySnapshot.docs) {
-        if (doc["organizationID"].toString().contains(currentUser!.uid)
-            && doc['status'].toString().contains('waiting')) {
-          setState(() {
-           requestCount++;
-          });
-        }
-      }
-    });
 
-    FirebaseFirestore.instance
-        .collection('appointments')
-        .get()
-        .then((QuerySnapshot querySnapshot) {
-      for (var doc in querySnapshot.docs) {
-        if (doc["organizationId"].toString().contains(currentUser!.uid)
-            && doc['status'].toString().contains('waiting')) {
-          setState(() {
-            appointmentRequestCount++;
-          });
-        }
-      }
-    });
 
-    FirebaseFirestore.instance
-        .collection('events')
-        .get()
-        .then((QuerySnapshot querySnapshot) {
-      for (var doc in querySnapshot.docs) {
-        if (doc["organizationID"].toString().contains(currentUser!.uid)) {
-          setState(() {
-            eventCount++;
-          });
-        }
-      }
-    });
+
+
   }
 
   @override
@@ -216,50 +179,11 @@ class _OrganizationProfileState extends State<OrganizationProfile> {
                       Text(_organization!.category.name,style: const TextStyle(fontSize: 15),),
                     ],
                   ),
-                  const SizedBox(width: 50,),
-                  GestureDetector(
-                    child: Column(
-                      children: [
-                        const Text("Events",style: TextStyle(fontSize: 17,fontWeight: FontWeight.bold),),
-                        const SizedBox(height: 15,),
-                        Text(eventCount.toString(),style: const TextStyle(fontSize: 15),),
-                      ],
-                    ),
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) =>  EventList(id: currentUser!.uid,)));
 
-                    },
-                  ),
                 ],
               ),
-              SizedBox(height: 20,),
-              GestureDetector(
-                child: Column(
-                  children: [
-                    const Text("Connection Request",style: TextStyle(fontSize: 17,fontWeight: FontWeight.bold),),
-                    const SizedBox(height: 15,),
-                    Text(requestCount.toString(),style: const TextStyle(fontSize: 15),),
-                  ],
-                ),
-                onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const RequestList()));
 
-                },
-              ),
-              SizedBox(height: 20,),
-              GestureDetector(
-                child: Column(
-                  children: [
-                    const Text("Appointment Request",style: TextStyle(fontSize: 17,fontWeight: FontWeight.bold),),
-                    const SizedBox(height: 15,),
-                    Text(appointmentRequestCount.toString(),style: const TextStyle(fontSize: 15),),
-                  ],
-                ),
-                onTap: (){
-               //   Navigator.push(context, MaterialPageRoute(builder: (context) => const RequestList()));
 
-                },
-              ),
             ],
           ),
         ),

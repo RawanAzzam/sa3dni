@@ -3,64 +3,58 @@ import 'package:sa3dni_app/models/category.dart';
 import 'package:sa3dni_app/models/organization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-
-class DatabaseServiceOrga{
-
+class DatabaseServiceOrga {
   final collectionOrga = FirebaseFirestore.instance.collection('organization');
-  final currentUser  = FirebaseAuth.instance.currentUser;
-  Future addOrganization(Organization organization,String id,String image ) async{
-    try{
-      return await collectionOrga.add({
-      'name': organization.name,
-      'address':organization.address,
-      'category':organization.category.name,
-      'phoneNumber':organization.phoneNumber,
-      'rate':organization.getRate().toString(),
-        'id':organization.id,
-        'image':image,
-        'email':organization.email
-    });
-    }
-    catch(e){
-      return null;
+  final collectionRate = FirebaseFirestore.instance.collection('rates');
 
+  final currentUser = FirebaseAuth.instance.currentUser;
+
+  Future addOrganization(
+      Organization organization, String id, String image) async {
+    try {
+      return await collectionOrga.doc(id).set({
+        'name': organization.name,
+        'address': organization.address,
+        'category': organization.category.name,
+        'phoneNumber': organization.phoneNumber,
+        'rate': organization.getRate().toString(),
+        'id': organization.id,
+        'image': image,
+        'email': organization.email,
+      });
+    } catch (e) {
+      return null;
     }
   }
 
-   Organization getCurrentOrganization(){
-     Organization or;
-     FirebaseFirestore.instance
-         .collection('organization')
-         .get()
-         .then((QuerySnapshot querySnapshot) {
-       for (var doc in querySnapshot.docs) {
-         if(doc["id"].toString().contains(currentUser!.uid)){
-         or = Organization(name: doc['name'],
-             phoneNumber: doc['phoneNumber'],
-             address: doc['address'],
-             category: Category(name:doc['category'] ),
-             email: doc['email'],
-             id: doc['id'],
-         image: doc['image']);
-          }
-       }
-     });
-return Organization.withNoParameter();   }
+  Future updateRate(Organization organization) async {
+    print(organization.getRate().toString());
+    try {
+      return await collectionOrga.doc(organization.id).set({
+        'name': organization.name,
+        'address': organization.address,
+        'category': organization.category.name,
+        'phoneNumber': organization.phoneNumber,
+        'rate': organization.getRate().toString(),
+        'id': organization.id,
+        'image': organization.image,
+        'email': organization.email,
+      });
+    }
+    catch (e) {
+      print(e);
+      return null;
+    }
+  }
+  Future addRate(Organization organization, int rate,String feedback,
+      String patientId) async {
+    print("feedback"+feedback);
+    return await collectionRate
+        .doc(organization.id)
+        .collection('organizationRates')
+        .doc(patientId)
+        .set({'rate': rate,
+               'comment':feedback});
 
-   String getImageOfOrganization() {
-     String image = 'https://icons.iconarchive.com/icons/icons8/ios7/512/Users-User-Male-icon.png';
-     FirebaseFirestore.instance
-         .collection('organization')
-         .get()
-         .then((QuerySnapshot querySnapshot) {
-       for (var doc in querySnapshot.docs) {
-         if(doc["id"].toString().contains(currentUser!.uid)){
-           print("Hello");
-           return doc['image'];
-         }
-       }
-     });
-print("hi");
-     return image;
-   }
+  }
 }

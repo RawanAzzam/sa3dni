@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sa3dni_app/organization/organizationList.dart';
 import 'package:sa3dni_app/patient/chat.dart';
 import 'package:sa3dni_app/patient/patientProfile.dart';
+import 'package:sa3dni_app/patient/quizPage.dart';
 import 'package:sa3dni_app/patient/settings.dart';
 import 'package:sa3dni_app/services/authenticateService.dart';
 import 'package:sa3dni_app/shared/constData.dart';
@@ -130,7 +131,19 @@ class _PatientHomeState extends State<PatientHome> with TickerProviderStateMixin
                   onTap: (){
                     Navigator.pop(context);
                     Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) =>  const AppointmentList(),
+                      builder: (context) =>   AppointmentList(),
+                    ));
+
+                  },
+                ),
+                ListTile(
+                  leading: const Text(" ?",
+                  style: TextStyle(fontSize: 25,color:Color(0xFF757575)),),
+                  title: const Text('Take a quiz'),
+                  onTap: (){
+                    Navigator.pop(context);
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) =>  const Quiz(),
                     ));
 
                   },

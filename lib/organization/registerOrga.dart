@@ -5,6 +5,7 @@ import 'package:sa3dni_app/models/organization.dart';
 import 'package:sa3dni_app/services/authenticateService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sa3dni_app/shared/constData.dart';
+import 'package:sa3dni_app/wrapper.dart';
 import '../models/person.dart';
 import '../services/databaseServicePerson.dart';
 import '../shared/inputField.dart';
@@ -151,10 +152,10 @@ class _RegisterOrganizationState extends State<RegisterOrganization> {
 
                            Organization organization = Organization(name: name, phoneNumber: phoneNumber,
                                address: address, category: widget.category,email: email,id:person.id,image: image);
-                           await  DatabaseServicePerson().addUser(user!, "organization");
+                        dynamic finalUser =  await  DatabaseServicePerson().addUser(user!, "organization");
 
-                           await  _databaseServiceOrga.addOrganization(organization,user.uid,image);
-                           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeWrapper()));
+                          dynamic data =  await  _databaseServiceOrga.addOrganization(organization,user.uid,image);
+                           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Wrapper()));
 
                          }
 

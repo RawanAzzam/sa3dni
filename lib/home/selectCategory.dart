@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:sa3dni_app/models/category.dart';
 import 'package:sa3dni_app/organization/organizationLogin.dart';
-import 'package:sa3dni_app/patient/SelectAnonOrNotLogin.dart';
 import 'package:sa3dni_app/patient/login.dart';
 import 'package:sa3dni_app/shared/constData.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

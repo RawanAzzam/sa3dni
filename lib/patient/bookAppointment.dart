@@ -10,7 +10,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sa3dni_app/services/databaseServiceAppointment.dart';
 class BookAppointment extends StatefulWidget {
   String organizationId;
-   BookAppointment({Key? key,required this.organizationId}) : super(key: key);
+  String organizationName;
+   BookAppointment({Key? key,required this.organizationId,
+                              required this.organizationName}) : super(key: key);
 
   @override
   State<BookAppointment> createState() => _BookAppointmentState();
@@ -103,6 +105,7 @@ class _BookAppointmentState extends State<BookAppointment> {
                             .bookAppointment(Appointment.PatientInfo(
                                 patientId: currentUser!.uid,
                                 organizationId: widget.organizationId,
+                                organizationName: widget.organizationName,
                                 email: email,
                                 patientName: name,
                                 phoneNumber: phoneNumber,

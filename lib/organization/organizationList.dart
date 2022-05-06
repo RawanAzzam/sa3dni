@@ -17,199 +17,240 @@ class OrganizationList extends StatefulWidget {
   @override
   State<OrganizationList> createState() => _OrganizationListState();
 }
-class _OrganizationListState extends State<OrganizationList> {
 
+class _OrganizationListState extends State<OrganizationList> {
   final currentUser = FirebaseAuth.instance.currentUser;
-  late Patient _patient ;
+  Patient? _patient;
   List<Organization> organizations = <Organization>[];
   List<Request> requests = <Request>[];
   Timer? timer;
   @override
-  void initState()  {
+  void initState() {
     super.initState();
-     getPatient();
-     changeStatus();
-
+    getPatient();
+    changeStatus();
   }
+
   void getPatient() {
     FirebaseFirestore.instance
         .collection('patients')
         .get()
         .then((QuerySnapshot querySnapshot) {
       for (var doc in querySnapshot.docs) {
-        if(doc['id'].toString().contains(currentUser!.uid)){
+        if (doc['id'].toString().contains(currentUser!.uid)) {
           setState(() {
-            _patient = Patient(name: doc['name'],
+            _patient = Patient(
+                name: doc['name'],
                 email: doc['email'],
-                category: Category(name:doc['category']),
+                category: Category(name: doc['category']),
                 id: doc['id']);
-            FirebaseFirestore.instance
-                .collection('organization')
-                .get()
-                .then((QuerySnapshot querySnapshot) {
-              for (var doc in querySnapshot.docs) {
-                try{
-                  if(_patient.category.name.contains(doc['category'])){
-                    setState(() {
-                      organizations.add(
-                        // address , category , email , name , phoneNumber , rate
-                          Organization(name: doc['name'],
-                              phoneNumber: doc['phoneNumber'],
-                              address: doc['address'],
-                              category: Category(name: doc['category']),
-                              email: doc['email'],
-                              id: doc['id'],
-                              image: doc['image']));
-                    });
-                  }
-                }catch(e){
-
-                }
-
-              }
-            });
           });
         }
       }
     });
-
-
   }
 
   @override
   Widget build(BuildContext context) {
-
-
-    if (organizations.isNotEmpty) {
+    if (_patient != null) {
       return Scaffold(
         body: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: ListView.builder(
-                    itemCount: organizations.length,
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('organization')
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return ListView.builder(
+                    itemCount: snapshot.data!.docs.length,
                     itemBuilder: (context, index) {
-                      Organization userData =
-                      organizations[index];
-                      return
-                        Column(
+                      DocumentSnapshot userData = snapshot.data!.docs[index];
+                      if (userData['category']
+                          .toString()
+                          .contains(_patient!.category.name)) {
+                        return Column(
                           children: [
                             Padding(
-                                padding: const EdgeInsets.fromLTRB(
-                                    10.0, 20.0, 10.0, 10.0),
-                                child: ListTile(
+                              padding: const EdgeInsets.fromLTRB(
+                                  10.0, 20.0, 10.0, 10.0),
+                              child: ListTile(
                                   title: Row(
                                     children: [
-                                      const Text('Name : ',
+                                      const Text(
+                                        'Name : ',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16.0,
-                                            fontFamily: 'DancingScript'
-                                        ),),
-                                      Text(userData.name,
+                                            fontFamily: 'DancingScript'),
+                                      ),
+                                      Text(
+                                        userData['name'],
                                         style: const TextStyle(
                                             fontSize: 16.0,
-                                            fontFamily: 'DancingScript'
-                                        ),),
+                                            fontFamily: 'DancingScript'),
+                                      ),
                                     ],
                                   ),
                                   subtitle: Column(
                                     children: [
                                       Row(
                                         children: [
-                                          const Text('Address : ',
+                                          const Text(
+                                            'Address : ',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 15.0,
-                                                fontFamily: 'DancingScript'
-                                            ),),
-                                          Text(userData.address,
+                                                fontFamily: 'DancingScript'),
+                                          ),
+                                          Text(
+                                            userData['address'],
                                             style: const TextStyle(
                                                 fontSize: 15.0,
-                                                fontFamily: 'DancingScript'
-                                            ),),
+                                                fontFamily: 'DancingScript'),
+                                          ),
                                         ],
                                       ),
                                       Row(
                                         children: [
-                                          const Text('Rate : ',
+                                          const Text(
+                                            'Rate : ',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 15.0,
-                                                fontFamily: 'DancingScript'
-                                            ),),
-                                          Text(userData.getRate().toString(),
+                                                fontFamily: 'DancingScript'),
+                                          ),
+                                          Text(
+                                            userData['rate'],
                                             style: const TextStyle(
                                                 fontSize: 15.0,
-                                                fontFamily: 'DancingScript'
-                                            ),),
+                                                fontFamily: 'DancingScript'),
+                                          ),
                                         ],
                                       ),
                                     ],
                                   ),
-
-                                 leading: CircleAvatar(backgroundImage: NetworkImage(userData.image,),
-                                     backgroundColor: Colors.white )
-                                ),
-
+                                  leading: CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                        userData['image'],
+                                      ),
+                                      backgroundColor: Colors.white)),
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 FlatButton.icon(
                                     onPressed: () async {
-                                      if(getStatus(userData.id).contains('nothing')
-                                      || getStatus(userData.id).contains('rejected')) {
-                                       await DatabaseServicesRequests().
-                                        addRequest(currentUser!.uid, userData.id);
-                                       changeStatus();
-                                      }else if(getStatus(userData.id).contains('waiting')){
-                                        await DatabaseServicesRequests().
-                                         deleteRequest(getId(userData.id));
+                                      if (getStatus(userData.id)
+                                              .contains('nothing') ||
+                                          getStatus(userData.id)
+                                              .contains('rejected')) {
+                                        await DatabaseServicesRequests()
+                                            .addRequest(
+                                                currentUser!.uid, userData.id);
+                                        changeStatus();
+                                      } else if (getStatus(userData.id)
+                                          .contains('waiting')) {
+                                        await DatabaseServicesRequests()
+                                            .deleteRequest(getId(userData.id));
                                         changeStatus();
                                       }
-
                                     },
-                                    icon:
-                                    Icon( getStatus(userData.id).contains('waiting') ?
-                                    Icons.cancel : getStatus(userData.id).contains('accepted') ?
-                                    Icons.person : Icons.group_add,color: Colors.blue,),
-                                    label: Text(getStatus(userData.id).contains('waiting') ?
-                                    'cancel' : getStatus(userData.id).contains('accepted') ?
-                                    'Following' : 'request')),
-                                SizedBox(width: 15,),
+                                    icon: Icon(
+                                      getStatus(userData.id).contains('waiting')
+                                          ? Icons.cancel
+                                          : getStatus(userData.id)
+                                                  .contains('accepted')
+                                              ? Icons.person
+                                              : Icons.group_add,
+                                      color: Colors.blue,
+                                    ),
+                                    label: Text(getStatus(userData.id)
+                                            .contains('waiting')
+                                        ? 'cancel'
+                                        : getStatus(userData.id)
+                                                .contains('accepted')
+                                            ? 'Following'
+                                            : 'request')),
+                                const SizedBox(
+                                  width: 15,
+                                ),
                                 FlatButton.icon(
-                                    onPressed: () async {
-
-                                      Navigator.of(context).push(MaterialPageRoute(
-                                        builder: (context) =>   ViewOrganizationProfile(organization:organizations[index],
-                                          status: getStatus(userData.id) ),
-                                      ));
-                                    },
-                                    icon:const Icon(  Icons.account_circle,color: Colors.red,)
-                                  ,
-                                    label: const Text('View Profile'),
+                                  onPressed: () async {
+                                    Organization organization = Organization(
+                                        name: userData['name'],
+                                        phoneNumber: userData['phoneNumber'],
+                                        address: userData['address'],
+                                        category: Category(
+                                            name: userData['category']),
+                                        email: userData['email'],
+                                        id: userData['id'],
+                                        image: userData['image']);
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          ViewOrganizationProfile(
+                                              organization: organization,
+                                              status: getStatus(userData.id)),
+                                    ));
+                                  },
+                                  icon: const Icon(
+                                    Icons.account_circle,
+                                    color: Colors.red,
+                                  ),
+                                  label: const Text('View Profile'),
                                 )
                               ],
                             ),
-                            Divider(color: ConstData().basicColor,
+                            Divider(
+                              color: ConstData().basicColor,
                               height: 20.0,
                               endIndent: 30.0,
-                              indent: 30.0,)
+                              indent: 30.0,
+                            )
                           ],
-
                         );
-                    }
-                )
-
-
+                      } else {
+                        return const SizedBox(
+                          height: 0,
+                        );
+                      }
+                    });
+              } else {
+                return Container(
+                  padding: const EdgeInsets.only(top: 30),
+                  child: Card(
+                    child: ListTile(
+                      title: Column(
+                        children: <Widget>[
+                          Icon(
+                            Icons.tag_faces,
+                            color: Theme.of(context).primaryColor,
+                            size: 35.0,
+                          ),
+                          const SizedBox(
+                            height: 5.0,
+                          ),
+                          const Text(
+                            "No Record Found",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 18.0, color: Colors.black87),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }
+            },
           ),
-
+        ),
       );
-    }
-
-    else {
-      return  Scaffold(
+    } else {
+      return Scaffold(
         backgroundColor: Colors.white,
-        body:  Container(
+        body: Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 40.0),
           child: Column(
@@ -268,28 +309,27 @@ class _OrganizationListState extends State<OrganizationList> {
                   ),
                 ),
               ),
-
             ],
           ),
         ),
-
       );
     }
   }
 
-  String getStatus(String organizationId ){
-
-    for(var request in requests){
-      if(request.patientId == currentUser!.uid && request.organizationId == organizationId) {
+  String getStatus(String organizationId) {
+    print(organizationId);
+    for (var request in requests) {
+      if (request.patientId == currentUser!.uid &&
+          request.organizationId == organizationId) {
         return request.status;
       }
     }
     return 'nothing';
   }
 
-  String getId(String organizationId){
-    for(var request in requests){
-      if(request.patientId == currentUser!.uid &&
+  String getId(String organizationId) {
+    for (var request in requests) {
+      if (request.patientId == currentUser!.uid &&
           request.organizationId == organizationId) {
         return request.id;
       }
@@ -297,15 +337,16 @@ class _OrganizationListState extends State<OrganizationList> {
     return '';
   }
 
-  void changeStatus(){
-    requests =[];
+  void changeStatus() {
+    requests = [];
     FirebaseFirestore.instance
         .collection('requests')
         .get()
         .then((QuerySnapshot querySnapshot) {
       for (var doc in querySnapshot.docs) {
         setState(() {
-          requests.add(Request(organizationId: doc['organizationID'],
+          requests.add(Request(
+              organizationId: doc['organizationID'],
               patientId: doc['patientId'],
               status: doc['status'],
               id: doc['id']));

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:sa3dni_app/organization/appointmentRequestList.dart';
+import 'package:sa3dni_app/organization/eventList.dart';
 import 'package:sa3dni_app/organization/eventPage.dart';
 import 'package:sa3dni_app/organization/organizationChat.dart';
 import 'package:sa3dni_app/organization/organizationProfile.dart';
+import 'package:sa3dni_app/organization/requestList.dart';
 import 'package:sa3dni_app/services/authenticateService.dart';
 import 'package:sa3dni_app/shared/constData.dart';
 import 'package:sa3dni_app/wrapper.dart';
@@ -24,7 +27,9 @@ class _OrganizationHomeState extends State<OrganizationHome> with TickerProvider
   late TabController _tabController;
   final currentUser = FirebaseAuth.instance.currentUser;
   Organization? _organization;
-
+  int connectionRequestCount = 0;
+  int appointmentRequestCount = 0;
+  int eventCount = 0;
   @override
   void initState() {
     super.initState();
@@ -49,9 +54,51 @@ class _OrganizationHomeState extends State<OrganizationHome> with TickerProvider
         }
       }
     });
+
+    FirebaseFirestore.instance
+        .collection('requests')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      for (var doc in querySnapshot.docs) {
+        if (doc['organizationID'].toString().contains(currentUser!.uid) &&
+            doc['status'].toString().contains('waiting')) {
+          setState(() {
+          connectionRequestCount++;
+          });
+        }
+      }});
+
+    FirebaseFirestore.instance
+        .collection('appointments')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      for (var doc in querySnapshot.docs) {
+        if (doc["organizationId"].toString().contains(currentUser!.uid)
+            && doc['status'].toString().contains('waiting')) {
+          setState(() {
+            appointmentRequestCount++;
+          });
+        }
+      }
+    });
+
+    FirebaseFirestore.instance
+        .collection('events')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      for (var doc in querySnapshot.docs) {
+        if (doc["organizationID"].toString().contains(currentUser!.uid)) {
+          setState(() {
+            eventCount++;
+          });
+        }
+      }
+    });
+
   }
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: ConstData().basicColor,
       appBar: AppBar(
@@ -69,12 +116,9 @@ class _OrganizationHomeState extends State<OrganizationHome> with TickerProvider
       ),
       body: TabBarView(
           controller: _tabController,
-          children:  [
-
+          children:  const [
             OrganizationProfile(),
             OrganizationChat(),
-
-
           ]
       ),
       bottomNavigationBar:
@@ -122,7 +166,7 @@ class _OrganizationHomeState extends State<OrganizationHome> with TickerProvider
                             letterSpacing: 3,
                             color: Colors.white
                         ),),
-                      SizedBox(height: 10,),
+                      const SizedBox(height: 10,),
                       Text(_organization != null ?_organization!.email : "email@gmail.com",
                         style: const TextStyle(
                             fontFamily: 'OpenSans',
@@ -135,11 +179,53 @@ class _OrganizationHomeState extends State<OrganizationHome> with TickerProvider
               ),
               ListTile(
                 leading: const Icon(Icons.event),
-                title: const Text('Add Event'),
+                title: Row(
+                  children: [
+                    const Text('Events'),
+                    const SizedBox(width: 10,),
+                    Text(eventCount != 0 ? eventCount.toString() : '',
+                    style: const TextStyle(color: Colors.red),)
+                  ],
+                ),
                 onTap: (){
                   Navigator.pop(context);
                   Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>  const EventPage(),
+                    builder: (context) =>   EventList(id: currentUser!.uid),
+                  ));
+
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.group_add),
+                title: Row(
+                  children: [
+                    const Text('Connection Request'),
+                    const SizedBox(width: 10,),
+                    Text(connectionRequestCount != 0 ? connectionRequestCount.toString() : '',style: const TextStyle(color: Colors.red),)
+                  ],
+                ),
+                onTap: (){
+                  Navigator.pop(context);
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>  const RequestList(),
+                  ));
+
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.date_range),
+                title: Row(
+                  children: [
+                    const Text('Appointment Request'),
+                    const SizedBox(width: 10,),
+                    Text(appointmentRequestCount != 0 ? appointmentRequestCount.toString() : '',
+                       style: const TextStyle(color: Colors.red),)
+                  ],
+                ),
+                onTap: (){
+                  Navigator.pop(context);
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>  const AppointmentRequestList(),
                   ));
 
                 },

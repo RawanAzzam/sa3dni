@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sa3dni_app/models/category.dart';
 import 'package:sa3dni_app/models/patient.dart';
+import 'package:sa3dni_app/patient/showFollowing.dart';
 
 import '../shared/constData.dart';
 class PatientProfile extends StatefulWidget {
@@ -139,7 +140,8 @@ class _ProfilePageState extends State<PatientProfile> {
                     ],
                   ),
                   onTap: (){
-                    //Navigator.push(context, MaterialPageRoute(builder: (context) => const RequestList()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => const ShowFollowing()));
 
                   },
                 ),

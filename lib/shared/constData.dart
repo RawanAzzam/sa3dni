@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 
 class ConstData{
   Color basicColor = Color(0xFF09376B);
-  Color secColor =  Colors.white;
+  Color secColor =  Color(0xFFDAEFEF);
   Color kAppPrimaryColor = Colors.grey.shade200;
   Color kWhite = Colors.white;
   Color kLightBlack = Colors.black.withOpacity(0.075);
