@@ -46,6 +46,7 @@ class _OrganizationSettingState extends State<OrganizationSetting> {
   @override
   void initState() {
     super.initState();
+
     updateInfo();
   }
 
@@ -65,6 +66,20 @@ class _OrganizationSettingState extends State<OrganizationSetting> {
                 email: doc['email'],
                 id: doc['id'],
                 image: doc['image']);
+
+            _organization!.listOfRate = [];
+            FirebaseFirestore.instance
+                .collection('rates')
+                .doc(_organization!.id)
+                .collection('organizationRates')
+                .get()
+                .then((QuerySnapshot querySnapshot) {
+              for (var doc in querySnapshot.docs) {
+                setState(() {
+                  _organization!.setRate(doc['rate']);
+                });
+              }
+            });
           });
         }
       }
@@ -334,15 +349,8 @@ class _OrganizationSettingState extends State<OrganizationSetting> {
 
   Organization updateEmail(String email){
 
-    Organization organization =
-    Organization(name: _organization!.name,
-        phoneNumber: _organization!.phoneNumber,
-        address: _organization!.address,
-        category: _organization!.category,
-        email: email,
-        id: _organization!.id,
-        image: _organization!.image);
-    return organization;
+    _organization!.email = email;
+    return _organization!;
     /*await currentUser!.updateEmail('rawanazzam77@gmail.com');
     if(currentUser !=  null){
     currentUser!.reauthenticateWithCredential(
@@ -358,48 +366,21 @@ class _OrganizationSettingState extends State<OrganizationSetting> {
   }
 
   Organization updateName(String name){
-    Organization organization =
-    Organization(name: name,
-        phoneNumber: _organization!.phoneNumber,
-        address: _organization!.address,
-        category: _organization!.category,
-        email: _organization!.email,
-        id: _organization!.id,
-        image: _organization!.image);
-    return organization;
+    _organization!.name = name;
+    return _organization!;
   }
   Organization updatePhoneNumber(String phoneNumber){
-    Organization organization =
-    Organization(name: _organization!.name,
-        phoneNumber: phoneNumber,
-        address: _organization!.address,
-        category: _organization!.category,
-        email: _organization!.email,
-        id: _organization!.id,
-        image: _organization!.image);
-    return organization;
+    _organization!.phoneNumber = phoneNumber;
+    return _organization!;
   }
   Organization updateAddress(String address){
-    Organization organization =
-    Organization(name: _organization!.name,
-        phoneNumber: _organization!.phoneNumber,
-        address: address,
-        category: _organization!.category,
-        email: _organization!.email,
-        id: _organization!.id,
-        image: _organization!.image);
-    return organization;
+
+    _organization!.address = address;
+    return _organization!;
   }
 
   Organization updateImage(String image){
-    Organization organization =
-    Organization(name: _organization!.name,
-        phoneNumber: _organization!.phoneNumber,
-        address: _organization!.address,
-        category: _organization!.category,
-        email: _organization!.email,
-        id: _organization!.id,
-        image: image);
-    return organization;
+    _organization!.image = image;
+    return _organization!;
   }
 }

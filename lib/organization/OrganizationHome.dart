@@ -3,6 +3,7 @@ import 'package:sa3dni_app/organization/appointmentRequestList.dart';
 import 'package:sa3dni_app/organization/eventList.dart';
 import 'package:sa3dni_app/organization/organizationChat.dart';
 import 'package:sa3dni_app/organization/organizationProfile.dart';
+import 'package:sa3dni_app/organization/organizationSetting.dart';
 import 'package:sa3dni_app/organization/requestList.dart';
 import 'package:sa3dni_app/services/authenticateService.dart';
 import 'package:sa3dni_app/shared/constData.dart';
@@ -234,7 +235,7 @@ class _OrganizationHomeState extends State<OrganizationHome> with TickerProvider
                 onTap: (){
                   Navigator.pop(context);
                   Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>  const SettingPage(),
+                    builder: (context) =>  const OrganizationSetting(),
                   ));
 
                 },
