@@ -4,6 +4,7 @@ import 'package:sa3dni_app/organization/eventList.dart';
 import 'package:sa3dni_app/organization/eventPage.dart';
 import 'package:sa3dni_app/organization/organizationChat.dart';
 import 'package:sa3dni_app/organization/organizationProfile.dart';
+import 'package:sa3dni_app/organization/organizationSetting.dart';
 import 'package:sa3dni_app/organization/requestList.dart';
 import 'package:sa3dni_app/services/authenticateService.dart';
 import 'package:sa3dni_app/shared/constData.dart';
@@ -236,7 +237,7 @@ class _OrganizationHomeState extends State<OrganizationHome> with TickerProvider
                 onTap: (){
                   Navigator.pop(context);
                   Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>  const SettingsPage(),
+                    builder: (context) =>  const OrganizationSetting(),
                   ));
 
                 },
@@ -244,8 +245,8 @@ class _OrganizationHomeState extends State<OrganizationHome> with TickerProvider
               ListTile(
                 leading: const Icon(Icons.assignment_return_outlined,),
                 title: const Text('SingOut'),
-                onTap: (){
-                  _authenticateService.singOut();
+                onTap: ()async{
+                 await _authenticateService.singOut();
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
                     builder: (context) =>  const Wrapper(),
                   ));
@@ -258,5 +259,10 @@ class _OrganizationHomeState extends State<OrganizationHome> with TickerProvider
       ),
 
     );
+  }
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 }

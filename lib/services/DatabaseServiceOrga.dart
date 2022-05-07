@@ -27,8 +27,7 @@ class DatabaseServiceOrga {
     }
   }
 
-  Future updateRate(Organization organization) async {
-    print(organization.getRate().toString());
+  Future updateInfo(Organization organization) async {
     try {
       return await collectionOrga.doc(organization.id).set({
         'name': organization.name,

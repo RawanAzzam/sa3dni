@@ -2,14 +2,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sa3dni_app/models/organization.dart';
-import 'package:sa3dni_app/models/request.dart';
-import 'package:sa3dni_app/organization/eventList.dart';
-import 'package:sa3dni_app/organization/requestList.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sa3dni_app/shared/constData.dart';
-
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import '../models/category.dart';
+import '../models/request.dart';
+import '../patient/feedbackList.dart';
+import '../patient/showFollowing.dart';
 
 class OrganizationProfile extends StatefulWidget {
 
@@ -23,23 +23,35 @@ class _OrganizationProfileState extends State<OrganizationProfile> {
   Organization? _organization;
 
   double rate = 0.0;
-  String image = '';
   final currentUser = FirebaseAuth.instance.currentUser;
-
+  List<Request> followers = [];
+  int eventCount = 0;
+  int countFeedback = 0;
 
   @override
   void initState() {
     super.initState();
-
     FirebaseFirestore.instance
-        .collection('organization')
+        .collection('rates')
+        .doc(currentUser!.uid)
+        .collection('organizationRates')
         .get()
         .then((QuerySnapshot querySnapshot) {
       for (var doc in querySnapshot.docs) {
-        if (doc['id'].toString().contains(currentUser!.uid)) {
-          print(doc["image"]);
+        setState(() {
+          countFeedback++;
+        });
+      }
+    });
+
+    FirebaseFirestore.instance
+        .collection('events')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      for (var doc in querySnapshot.docs) {
+        if (doc["organizationID"].toString().contains(currentUser!.uid)) {
           setState(() {
-            image = doc['image'];
+            eventCount++;
           });
         }
       }
@@ -67,6 +79,22 @@ class _OrganizationProfileState extends State<OrganizationProfile> {
 
 
 
+    FirebaseFirestore.instance
+        .collection('requests')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      for (var doc in querySnapshot.docs) {
+        if(doc['organizationID'].toString().contains(currentUser!.uid)
+            && doc['status'].toString().contains('accepted')) {
+          setState(() {
+            followers.add(Request(organizationId: doc['organizationID'],
+                patientId: doc['patientId'],
+                status: doc['status'],
+                id: doc['id']));
+          });
+        }
+      }
+    });
 
 
   }
@@ -74,7 +102,7 @@ class _OrganizationProfileState extends State<OrganizationProfile> {
   @override
   Widget build(BuildContext context) {
 
-    if (image.isNotEmpty && _organization != null) {
+    if ( _organization != null) {
       return Scaffold(
         body: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -100,7 +128,7 @@ class _OrganizationProfileState extends State<OrganizationProfile> {
                 height: 25,
               ),
               CircleAvatar(
-                backgroundImage: NetworkImage(image),
+                backgroundImage: NetworkImage(_organization!.image),
                 radius: 60,
               ),
               const SizedBox(
@@ -109,79 +137,101 @@ class _OrganizationProfileState extends State<OrganizationProfile> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Row(
-                        children: [
-                           Icon(
-                            Icons.email,
-                            color: Colors.red[800],
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Text(_organization!.email),
+                  const Text("Category : ",style: TextStyle(fontSize: 17,fontWeight: FontWeight.bold),),
+                  Text(_organization!.category.name,style: const TextStyle(fontSize: 15),),
+                ],
+              ),
+              SizedBox(height: 20,),
+              Row( mainAxisAlignment: MainAxisAlignment.center,
+                children: [
 
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                           Icon(
-                            Icons.phone,
-                            color: Colors.green[800],
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Text(_organization!.phoneNumber),
+                  Row(
+                      children: [
+                        Text(eventCount.toString(),style: const TextStyle(fontSize: 17),),
+                        const Text("  Events",style: TextStyle(fontSize: 17,fontWeight: FontWeight.bold),),
 
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                           Icon(
-                            Icons.location_on,
-                            color: Colors.blue[900],
-                          ),
-                          SizedBox(width: 10,),
-                          Text(_organization!.address)
-                        ],
-                      ),
+                      ],
+                    ),
 
-                    ],
+SizedBox(width: 30,),
+                  GestureDetector(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(followers.length.toString(),style: const TextStyle(fontSize: 17),),
+                        const Text("  Followers",style: TextStyle(fontSize: 17,fontWeight: FontWeight.bold),),
+                      ],
+                    ),
+                    onTap: (){
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => const ShowFollowing()));
+
+                    },
                   ),
                 ],
               ),
               Divider(height: 50,color: ConstData().basicColor,indent: 20,endIndent: 20,),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Column(
-                    children: [
-                      const Text("Rate",style: const TextStyle(fontSize: 17,fontWeight: FontWeight.bold),),
-                      const SizedBox(height: 15,),
-                      Text(rate.toString(),style: const TextStyle(fontSize: 15),),
-                    ],
+                  Text(
+                    rate.toString(),
+                    style: const TextStyle(fontSize: 25),
                   ),
-                  const SizedBox(width: 50,),
-                  Column(
-                    children: [
-                      const Text("Category",style: TextStyle(fontSize: 17,fontWeight: FontWeight.bold),),
-                      const SizedBox(height: 15,),
-                      Text(_organization!.category.name,style: const TextStyle(fontSize: 15),),
-                    ],
+                  const SizedBox(
+                    width: 15,
                   ),
-
+                  RatingBar.builder(
+                    ignoreGestures: true,
+                    itemSize: 25,
+                    initialRating: rate,
+                    minRating: 0,
+                    direction: Axis.horizontal,
+                    allowHalfRating: true,
+                    itemCount: 5,
+                    itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                    itemBuilder: (context, _) => const Icon(
+                      Icons.star,
+                      color: Colors.amber,
+                    ),
+                    onRatingUpdate: (rating) {
+                      print(rating);
+                    },
+                  ),
                 ],
               ),
+              SizedBox(height: 20,),
+              GestureDetector(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children:  [
+                    const Icon(Icons.feedback_outlined,
+                      color: Colors.green,),
+                    const SizedBox(width: 20,),
+                    Text(countFeedback.toString(),
+                      style: const TextStyle(
+                          fontFamily: 'DancingScript',
+                          fontSize: 25
+                      ),),
+                    const Text('  Feedback',
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),),
+                    const SizedBox(width: 20,),
+                    const Icon(Icons.arrow_forward_ios_outlined,
+                      size: 20,)
+                  ],
+                ),
+                onTap: (){
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => FeedbackList(
+                            id: currentUser!.uid,
+                          )));
+                },
+              ),
+
 
 
             ],

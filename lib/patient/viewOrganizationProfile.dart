@@ -422,7 +422,7 @@ class _ViewOrganizationProfileState extends State<ViewOrganizationProfile> {
                   });
                 }
               });
-              await DatabaseServiceOrga().updateRate(widget.organization);
+              await DatabaseServiceOrga().updateInfo(widget.organization);
               Navigator.pop(context);
             },
           child: const Text('Review'),

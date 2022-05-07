@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sa3dni_app/shared/constData.dart';
+import '../models/ReportUser.dart';
 import '../models/category.dart';
 import '../models/organization.dart';
 import '../models/patient.dart';
@@ -236,6 +237,18 @@ class _ChatRoomState extends State<ChatRoom> {
               }
             },
           ),
+
+          actions: [
+            FlatButton(
+                onPressed:() {
+                  showDialog(
+                 context: context, builder: (context) => const ReportUser());
+
+                },
+                child: const Icon(Icons.report,color: Colors.white,)
+
+            )
+          ],
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -325,6 +338,16 @@ class _ChatRoomState extends State<ChatRoom> {
               }
             },
           ),
+          actions: [
+            FlatButton(
+                onPressed:() {
+                  showDialog(
+                      context: context, builder: (context) => const ReportUser());
+                },
+                child: const Icon(Icons.report,color: Colors.white,)
+
+            )
+          ],
         ),
         body: SingleChildScrollView(
           child: Column(

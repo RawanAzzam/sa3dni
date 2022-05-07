@@ -140,7 +140,7 @@ class _QuizState extends State<Quiz> {
                                     percent > 0.3 && percent <= 0.65 ? 'Medium':
                                     'High'),
                       const SizedBox(height: 10),
-                      Text((percent*100).toString()+'%')
+                      Text((percent*100).toStringAsFixed(2)+'%')
                     ],
                   ),
                   progressColor: Colors.green,
