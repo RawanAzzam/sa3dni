@@ -154,9 +154,8 @@ class _PatientHomeState extends State<PatientHome> with TickerProviderStateMixin
                   onTap: (){
                     Navigator.pop(context);
                     Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) =>  const SettingsPage(),
+                      builder: (context) =>  const SettingPage(),
                     ));
-
                   },
                 ),
                 ListTile(

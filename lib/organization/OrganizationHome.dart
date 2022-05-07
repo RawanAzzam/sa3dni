@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sa3dni_app/organization/appointmentRequestList.dart';
 import 'package:sa3dni_app/organization/eventList.dart';
-import 'package:sa3dni_app/organization/eventPage.dart';
 import 'package:sa3dni_app/organization/organizationChat.dart';
 import 'package:sa3dni_app/organization/organizationProfile.dart';
 import 'package:sa3dni_app/organization/requestList.dart';
@@ -12,7 +11,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/category.dart';
 import '../models/organization.dart';
-import '../patient/chat.dart';
 import '../patient/settings.dart';
 
 class OrganizationHome extends StatefulWidget {
@@ -236,7 +234,7 @@ class _OrganizationHomeState extends State<OrganizationHome> with TickerProvider
                 onTap: (){
                   Navigator.pop(context);
                   Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>  const SettingsPage(),
+                    builder: (context) =>  const SettingPage(),
                   ));
 
                 },
