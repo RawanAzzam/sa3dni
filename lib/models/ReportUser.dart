@@ -90,6 +90,7 @@ class _ReportUserState extends State<ReportUser> {
               return 'Please enter a value';
             }
             return null;
+
           },
         ),
       ),
