@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sa3dni_app/organization/appointmentRequestList.dart';
 import 'package:sa3dni_app/organization/eventList.dart';
-import 'package:sa3dni_app/organization/eventPage.dart';
 import 'package:sa3dni_app/organization/organizationChat.dart';
 import 'package:sa3dni_app/organization/organizationProfile.dart';
-import 'package:sa3dni_app/organization/organizationSetting.dart';
 import 'package:sa3dni_app/organization/requestList.dart';
 import 'package:sa3dni_app/services/authenticateService.dart';
 import 'package:sa3dni_app/shared/constData.dart';
@@ -13,7 +11,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/category.dart';
 import '../models/organization.dart';
-import '../patient/chat.dart';
 import '../patient/settings.dart';
 
 class OrganizationHome extends StatefulWidget {
@@ -237,7 +234,7 @@ class _OrganizationHomeState extends State<OrganizationHome> with TickerProvider
                 onTap: (){
                   Navigator.pop(context);
                   Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>  const OrganizationSetting(),
+                    builder: (context) =>  const SettingPage(),
                   ));
 
                 },
@@ -245,8 +242,8 @@ class _OrganizationHomeState extends State<OrganizationHome> with TickerProvider
               ListTile(
                 leading: const Icon(Icons.assignment_return_outlined,),
                 title: const Text('SingOut'),
-                onTap: ()async{
-                 await _authenticateService.singOut();
+                onTap: (){
+                  _authenticateService.singOut();
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
                     builder: (context) =>  const Wrapper(),
                   ));
@@ -259,10 +256,5 @@ class _OrganizationHomeState extends State<OrganizationHome> with TickerProvider
       ),
 
     );
-  }
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
   }
 }

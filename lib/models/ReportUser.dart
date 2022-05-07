@@ -80,7 +80,6 @@ class _ReportUserState extends State<ReportUser> {
           decoration: const InputDecoration(
             hintText: 'Enter your Report here',
             filled: true,
-
           ),
           maxLines: 5,
           maxLength: 4096,
@@ -90,7 +89,6 @@ class _ReportUserState extends State<ReportUser> {
               return 'Please enter a value';
             }
             return null;
-
           },
         ),
       ),
