@@ -3,16 +3,14 @@ import 'package:sa3dni_app/organization/appointmentRequestList.dart';
 import 'package:sa3dni_app/organization/eventList.dart';
 import 'package:sa3dni_app/organization/organizationChat.dart';
 import 'package:sa3dni_app/organization/organizationProfile.dart';
-import 'package:sa3dni_app/organization/organizationSetting.dart';
 import 'package:sa3dni_app/organization/requestList.dart';
 import 'package:sa3dni_app/services/authenticateService.dart';
 import 'package:sa3dni_app/shared/constData.dart';
 import 'package:sa3dni_app/wrapper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../models/category.dart';
-import '../models/organization.dart';
-import '../patient/settings.dart';
+
+import 'Setting/organizationSetting.dart';
 
 class OrganizationHome extends StatefulWidget {
   const OrganizationHome({Key? key}) : super(key: key);
@@ -21,11 +19,11 @@ class OrganizationHome extends StatefulWidget {
   _OrganizationHomeState createState() => _OrganizationHomeState();
 }
 
-class _OrganizationHomeState extends State<OrganizationHome> with TickerProviderStateMixin {
+class _OrganizationHomeState extends State<OrganizationHome>
+    with TickerProviderStateMixin {
   final AuthenticateService _authenticateService = AuthenticateService();
   late TabController _tabController;
   final currentUser = FirebaseAuth.instance.currentUser;
-  Organization? _organization;
   int connectionRequestCount = 0;
   int appointmentRequestCount = 0;
   int eventCount = 0;
@@ -34,25 +32,7 @@ class _OrganizationHomeState extends State<OrganizationHome> with TickerProvider
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _tabController.animateTo(1);
-    FirebaseFirestore.instance
-        .collection('organization')
-        .get()
-        .then((QuerySnapshot querySnapshot) {
-      for (var doc in querySnapshot.docs) {
-        if (doc["id"].toString().contains(currentUser!.uid)) {
-          setState(() {
-            _organization = Organization(
-                name: doc['name'],
-                phoneNumber: doc['phoneNumber'],
-                address: doc['address'],
-                category: Category(name: doc['category']),
-                email: doc['email'],
-                id: doc['id'],
-                image: doc['image']);
-          });
-        }
-      }
-    });
+
 
     FirebaseFirestore.instance
         .collection('requests')
@@ -62,18 +42,19 @@ class _OrganizationHomeState extends State<OrganizationHome> with TickerProvider
         if (doc['organizationID'].toString().contains(currentUser!.uid) &&
             doc['status'].toString().contains('waiting')) {
           setState(() {
-          connectionRequestCount++;
+            connectionRequestCount++;
           });
         }
-      }});
+      }
+    });
 
     FirebaseFirestore.instance
         .collection('appointments')
         .get()
         .then((QuerySnapshot querySnapshot) {
       for (var doc in querySnapshot.docs) {
-        if (doc["organizationId"].toString().contains(currentUser!.uid)
-            && doc['status'].toString().contains('waiting')) {
+        if (doc["organizationId"].toString().contains(currentUser!.uid) &&
+            doc['status'].toString().contains('waiting')) {
           setState(() {
             appointmentRequestCount++;
           });
@@ -93,169 +74,225 @@ class _OrganizationHomeState extends State<OrganizationHome> with TickerProvider
         }
       }
     });
-
   }
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: ConstData().basicColor,
       appBar: AppBar(
         title: const Text('Home'),
         backgroundColor: ConstData().basicColor,
         actions: [
-
           FlatButton(
-              onPressed:() {
-              },
-              child: const Icon(Icons.notifications,color: Colors.white,)
-
-          )
+              onPressed: () {},
+              child: const Icon(
+                Icons.notifications,
+                color: Colors.white,
+              ))
         ],
       ),
-      body: TabBarView(
-          controller: _tabController,
-          children:  const [
-            OrganizationProfile(),
-            OrganizationChat(),
-          ]
-      ),
-      bottomNavigationBar:
-      TabBar(
-
-          controller: _tabController,
-          tabs: const [
-
-            Tab(
-              icon: Icon(Icons.person),
-              text: 'My Profile',
-            ),
-            Tab(
-              icon: Icon(Icons.chat_bubble),
-              text: 'Chat',
-            ),
-
-          ]
-
-      ),
+      body: TabBarView(controller: _tabController, children: const [
+        OrganizationProfile(),
+        OrganizationChat(),
+      ]),
+      bottomNavigationBar: TabBar(controller: _tabController, tabs: const [
+        Tab(
+          icon: Icon(Icons.person),
+          text: 'My Profile',
+        ),
+        Tab(
+          icon: Icon(Icons.chat_bubble),
+          text: 'Chat',
+        ),
+      ]),
       drawer: Drawer(
+          child: ListView(
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(
+              color: ConstData().basicColor,
+            ),
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('organization')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return ListView.builder(
+                      itemCount: snapshot.data?.docs.length,
+                      itemBuilder: (context, index) {
+                    DocumentSnapshot userData =
+                    snapshot.data!.docs[index];
+if(userData['id'].toString().contains(currentUser!.uid)) {
+  return Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CircleAvatar(
+                              backgroundImage: NetworkImage(
+                          userData['image'])
+                          ,radius: 30,
+                              backgroundColor: Colors.white),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            userData['name'],
+                            style: const TextStyle(
+                                fontFamily: 'OpenSans',
+                                fontSize: 15,
+                                letterSpacing: 3,
+                                color: Colors.white),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                        userData['email'],
+                            style: const TextStyle(
+                                fontFamily: 'OpenSans',
+                                fontSize: 10,
+                                color: Colors.white),
+                          )
+                        ],
+                      ),
+                    );
+}
+else{
+  return SizedBox();
+}
+                  });
 
-          child:
-          ListView(
-            children: [
-              DrawerHeader(
-                decoration: BoxDecoration(
-                  color: ConstData().basicColor,
+                } else {
+                  return Container(
+                    padding: const EdgeInsets.only(top: 30),
+                    child: Card(
+                      child: ListTile(
+                        title: Column(
+                          children: <Widget>[
+                            Icon(
+                              Icons.tag_faces,
+                              color: Theme.of(context).primaryColor,
+                              size: 35.0,
+                            ),
+                            const SizedBox(
+                              height: 5.0,
+                            ),
+                            const Text(
+                              "No Record Found",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 18.0, color: Colors.black87),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }
+              },
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.event),
+            title: Row(
+              children: [
+                const Text('Events'),
+                const SizedBox(
+                  width: 10,
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                       CircleAvatar(backgroundImage:NetworkImage(_organization!= null ?
-                       _organization!.image:
-                       'https://icons.iconarchive.com/icons/icons8/ios7/512/Users-User-Male-icon.png'),
-                          radius: 30,
-                          backgroundColor: Colors.white),
-                      const SizedBox(height: 10,),
-                      Text(_organization != null ?_organization!.name : "name",
-                        style: const TextStyle(
-                            fontFamily: 'OpenSans',
-                            fontSize: 15,
-                            letterSpacing: 3,
-                            color: Colors.white
-                        ),),
-                      const SizedBox(height: 10,),
-                      Text(_organization != null ?_organization!.email : "email@gmail.com",
-                        style: const TextStyle(
-                            fontFamily: 'OpenSans',
-                            fontSize: 10,
-                            color: Colors.white
-                        ),)
-                    ],
-                  ),
+                Text(
+                  eventCount != 0 ? eventCount.toString() : '',
+                  style: const TextStyle(color: Colors.red),
+                )
+              ],
+            ),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => EventList(id: currentUser!.uid),
+              ));
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.group_add),
+            title: Row(
+              children: [
+                const Text('Connection Request'),
+                const SizedBox(
+                  width: 10,
                 ),
-              ),
-              ListTile(
-                leading: const Icon(Icons.event),
-                title: Row(
-                  children: [
-                    const Text('Events'),
-                    const SizedBox(width: 10,),
-                    Text(eventCount != 0 ? eventCount.toString() : '',
-                    style: const TextStyle(color: Colors.red),)
-                  ],
+                Text(
+                  connectionRequestCount != 0
+                      ? connectionRequestCount.toString()
+                      : '',
+                  style: const TextStyle(color: Colors.red),
+                )
+              ],
+            ),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const RequestList(),
+              ));
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.date_range),
+            title: Row(
+              children: [
+                const Text('Appointment Request'),
+                const SizedBox(
+                  width: 10,
                 ),
-                onTap: (){
-                  Navigator.pop(context);
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>   EventList(id: currentUser!.uid),
-                  ));
-
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.group_add),
-                title: Row(
-                  children: [
-                    const Text('Connection Request'),
-                    const SizedBox(width: 10,),
-                    Text(connectionRequestCount != 0 ? connectionRequestCount.toString() : '',style: const TextStyle(color: Colors.red),)
-                  ],
-                ),
-                onTap: (){
-                  Navigator.pop(context);
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>  const RequestList(),
-                  ));
-
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.date_range),
-                title: Row(
-                  children: [
-                    const Text('Appointment Request'),
-                    const SizedBox(width: 10,),
-                    Text(appointmentRequestCount != 0 ? appointmentRequestCount.toString() : '',
-                       style: const TextStyle(color: Colors.red),)
-                  ],
-                ),
-                onTap: (){
-                  Navigator.pop(context);
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>  const AppointmentRequestList(),
-                  ));
-
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.settings),
-                title: const Text('Settings'),
-                onTap: (){
-                  Navigator.pop(context);
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>  const OrganizationSetting(),
-                  ));
-
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.assignment_return_outlined,),
-                title: const Text('SingOut'),
-                onTap: (){
-                  _authenticateService.singOut();
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) =>  const Wrapper(),
-                  ));
-                },
-              ),
-
-            ],
-          )
-
-      ),
-
+                Text(
+                  appointmentRequestCount != 0
+                      ? appointmentRequestCount.toString()
+                      : '',
+                  style: const TextStyle(color: Colors.red),
+                )
+              ],
+            ),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const AppointmentRequestList(),
+              ));
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.settings),
+            title: const Text('Settings'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const OrganizationSetting(),
+              ));
+            },
+          ),
+          ListTile(
+            leading: const Icon(
+              Icons.assignment_return_outlined,
+            ),
+            title: const Text('SingOut'),
+            onTap: () {
+              _authenticateService.singOut();
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (context) => const Wrapper(),
+              ));
+            },
+          ),
+        ],
+      )),
     );
+  }
+
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 }

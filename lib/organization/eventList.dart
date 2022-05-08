@@ -167,5 +167,9 @@ class _EventListState extends State<EventList> {
 
   }
 
-
+@override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
 }
