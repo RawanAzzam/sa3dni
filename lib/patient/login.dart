@@ -98,7 +98,7 @@ class _SignInState extends State<SignIn> {
 
                         }
                       },
-                      child: const Text('Sing in',
+                      child: const Text('Sign in',
                           style: TextStyle(color: Colors.white)),
                       color: ConstData().basicColor,
                     ),
