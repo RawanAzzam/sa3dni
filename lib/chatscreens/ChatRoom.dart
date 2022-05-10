@@ -71,7 +71,10 @@ class _ChatRoomState extends State<ChatRoom> {
     if (_message.text.isNotEmpty) {
       if(currentUser!.uid==patient?.id){
         messages = {
-          "send by":  patient!.name,
+          'id of sender':patient!.id,
+          "send by ":  patient!.name,
+          "id of receiver":widget.userMap['id'],
+          'send to ': widget.userMap['name'],
           "message": _message.text,
           "type": "text",
           "time": FieldValue.serverTimestamp(),
@@ -80,7 +83,10 @@ class _ChatRoomState extends State<ChatRoom> {
       }
       else if(currentUser!.uid==_organization?.id){
         messages = {
-          "send by":  _organization!.name,
+          'id of sender':_organization!.id,
+          "send by ":  _organization!.name,
+          "id of receiver":widget.userMap['id'],
+          'send to ': widget.userMap['name'],
           "message": _message.text,
           "type": "text",
           "time": FieldValue.serverTimestamp(),
@@ -91,8 +97,6 @@ class _ChatRoomState extends State<ChatRoom> {
       _message.clear();
       await FirebaseFirestore.instance
           .collection('chatroom')
-          // .doc(widget.chatRoomId)
-          // .collection('chats')
           .add(messages);
 
       }
@@ -104,11 +108,12 @@ class _ChatRoomState extends State<ChatRoom> {
   }
 
   Widget messages(Size size, Map<String, dynamic> map, BuildContext context) {
-    if(currentUser!.uid==patient?.id) {
+    if(currentUser!.uid==patient?.id ) {
       return map['type'] == "text"
           ? Container(
         width: size.width,
-        alignment: map['send by'] == patient!.name
+        alignment: map['id of sender'] == patient!.id
+            // && map['id of receiver']==widget.userMap['id']
             ? Alignment.centerRight
             : Alignment.centerLeft,
         child: Container(
@@ -132,7 +137,8 @@ class _ChatRoomState extends State<ChatRoom> {
         height: size.height / 2.5,
         width: size.width,
         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-        alignment: map['send by'] == patient!.name
+        alignment: map['id of sender'] == patient!.id
+            // && map['id of receiver']==widget.userMap['id']
             ? Alignment.centerRight
             : Alignment.centerLeft,
         // child: InkWell(
@@ -158,11 +164,12 @@ class _ChatRoomState extends State<ChatRoom> {
         // ),
       );
     }
-    else{
+    else if (currentUser!.uid==_organization?.id ){
       return map['type'] == "text"
           ? Container(
         width: size.width,
-        alignment: map['send by'] == _organization!.name
+        alignment: map['id of sender'] == _organization!.id
+            // && map['id of receiver']==widget.userMap['id']
             ? Alignment.centerRight
             : Alignment.centerLeft,
         child: Container(
@@ -174,7 +181,7 @@ class _ChatRoomState extends State<ChatRoom> {
           ),
           child: Text(
             map['message'],
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
               color: Colors.white,
@@ -185,8 +192,9 @@ class _ChatRoomState extends State<ChatRoom> {
           : Container(
         height: size.height / 2.5,
         width: size.width,
-        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-        alignment: map['send by'] == _organization!.name
+        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+        alignment: map['id of sender'] == _organization!.id
+            // && map['id of receiver']==widget.userMap['id']
             ? Alignment.centerRight
             : Alignment.centerLeft,
         // child: InkWell(
@@ -211,6 +219,9 @@ class _ChatRoomState extends State<ChatRoom> {
         //   ),
         // ),
       );
+    }
+    else {
+      return Container();
     }
   }
   @override
@@ -271,7 +282,13 @@ class _ChatRoomState extends State<ChatRoom> {
                         itemBuilder: (context, index) {
                           Map<String, dynamic> map = snapshot.data!.docs[index]
                               .data() as Map<String, dynamic>;
-                          return messages(size, map, context);
+                          // if(map['id of sender'] == patient!.id && map['send to']==widget.userMap['name']) {
+                            return messages(size, map, context);
+                          // }
+                          // else {
+                          //   return Container();
+                          // }
+
                         },
                       );
                     } else {
@@ -323,7 +340,8 @@ class _ChatRoomState extends State<ChatRoom> {
           backgroundColor: ConstData().basicColor,
           title: StreamBuilder<DocumentSnapshot>(
             stream:
-            FirebaseFirestore.instance.collection("organization").doc(widget.userMap['uid']).snapshots(),
+            FirebaseFirestore.instance.collection("organization")
+                .doc(widget.userMap['uid']).snapshots(),
             builder: (context, snapshot) {
               if (snapshot.data != null) {
                 return Container(
@@ -371,8 +389,12 @@ class _ChatRoomState extends State<ChatRoom> {
                         itemBuilder: (context, index) {
                           Map<String, dynamic> map = snapshot.data!.docs[index]
                               .data() as Map<String, dynamic>;
-                          print(snapshot.data!.docs[index]['time']);
-                          return messages(size, map, context);
+                          // if(map['id of sender'] == _organization!.id && map['send to']==widget.userMap['name']) {
+                            return messages(size, map, context);
+                          // }
+                          // else {
+                          //   return Container();
+                          // }
                         },
                       );
                     } else {
