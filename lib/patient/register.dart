@@ -132,7 +132,7 @@ class _RegisterState extends State<Register> {
                           }
                         }
                       },
-                      child: const Text('Sing up',
+                      child: const Text('Sign up',
                         style: TextStyle(color: Colors.white),),
                       color: ConstData().basicColor,
                     ),

@@ -227,7 +227,7 @@ class _ChattingScreenState extends State<ChattingScreen> with WidgetsBindingObse
               ? ListTile(
             onTap: () {
               String roomId = chatRoomId(
-                  patient!.name,
+                  patient!.id,
                   userMapsearch!['name']);
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -280,7 +280,7 @@ class _ChattingScreenState extends State<ChattingScreen> with WidgetsBindingObse
                             // String name= await userMap!['name'];
                             await setusermap(requests[index].organizationId);
                               String roomId = chatRoomId(
-                                  patient!.name,
+                                  patient!.id,
                                 userMap!['name'],
                                   );
 

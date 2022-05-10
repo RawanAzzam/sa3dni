@@ -16,7 +16,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFD9CDCA),
+      backgroundColor: ConstData().secColor,
       appBar: AppBar(
         title: const Text('Reset Password'),
         backgroundColor: ConstData().basicColor,
@@ -27,6 +27,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
           Padding(
             padding: const EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 20.0),
             child: TextField(
+
               decoration: textInputField.copyWith(hintText: 'Email') ,
               onChanged: (val){
                 setState(() {
@@ -42,7 +43,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
             },
             child: const Text('Reset Password',
                 style: TextStyle(color: Colors.white)),
-            color: const Color(0xFF916F64),)
+            color:  ConstData().basicColor,)
         ],
       ),
     );

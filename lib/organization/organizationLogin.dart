@@ -105,7 +105,7 @@ class _OrganizationLoginState extends State<OrganizationLogin> {
 
                         }
                       },
-                      child: const Text('Sing in',
+                      child: const Text('Sign in',
                           style: TextStyle(color: Colors.white)),
                       color: ConstData().basicColor,
                     ),

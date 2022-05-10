@@ -194,7 +194,7 @@ class _OrganizationChatScreenState extends State<OrganizationChatScreen> with Wi
                 ? ListTile(
               onTap: () {
                 String roomId = chatRoomId(
-                    _organization!.name,
+                    _organization!.id,
                     userMapsearch!['name']);
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -248,7 +248,7 @@ class _OrganizationChatScreenState extends State<OrganizationChatScreen> with Wi
                                   onPressed: ()async {
                                     await setusermap(requests[index].patientId);
                                     String roomId = chatRoomId(
-                                        _organization!.name,
+                                        _organization!.id,
                                         userMap!['name']);
                                     Navigator.of(context).push(
                                       MaterialPageRoute(
