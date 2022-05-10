@@ -58,7 +58,10 @@ class _ShowFollowingState extends State<ShowFollowing> {
                   DocumentSnapshot userData = snapshot.data!.docs[index];
                   if (userData['patientId'].toString().contains(currentUser!.uid)
                   && userData['status'].toString().contains('accepted')) {
-                    Organization organization = getOrganization(userData['organizationID'])!;
+                    Organization? organization;
+                    if(getOrganization(userData['organizationID']) != null) {
+                      organization = getOrganization(userData['organizationID'])!;
+                    }
                     return Column(
                       children: [
                         Padding(
@@ -75,7 +78,8 @@ class _ShowFollowingState extends State<ShowFollowing> {
                                         fontFamily: 'DancingScript'),
                                   ),
                                   Text(
-                                   organization.name,
+                                   organization != null ?
+                                   organization.name : 'name' ,
                                     style: const TextStyle(
                                         fontSize: 16.0,
                                         fontFamily: 'DancingScript'),
@@ -94,7 +98,9 @@ class _ShowFollowingState extends State<ShowFollowing> {
                                             fontFamily: 'DancingScript'),
                                       ),
                                       Text(
-                                        organization.address,
+                                        organization != null ?
+                                        organization.address :
+                                        'address',
                                         style: const TextStyle(
                                             fontSize: 15.0,
                                             fontFamily: 'DancingScript'),
@@ -106,7 +112,9 @@ class _ShowFollowingState extends State<ShowFollowing> {
                               ),
                               leading: CircleAvatar(
                                   backgroundImage: NetworkImage(
-                                  organization.image,
+                                  organization != null ?
+                                    organization.image:
+                                    'https://icons.iconarchive.com/icons/icons8/ios7/512/Users-User-Male-icon.png',
                                   ),
                                   backgroundColor: Colors.white)),
                         ),
@@ -123,7 +131,7 @@ class _ShowFollowingState extends State<ShowFollowing> {
                                     .push(MaterialPageRoute(
                                   builder: (context) =>
                                       ViewOrganizationProfile(
-                                          organization: organization,
+                                          organization: organization!,
                                           status: 'accepted'),
                                 ));
                               },

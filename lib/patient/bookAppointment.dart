@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sa3dni_app/models/appointment.dart';
 import 'package:sa3dni_app/models/category.dart';
+import 'package:sa3dni_app/models/patient.dart';
+import 'package:sa3dni_app/services/databaseServicesNotification.dart';
 import 'package:sa3dni_app/shared/constData.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -11,8 +13,10 @@ import 'package:sa3dni_app/services/databaseServiceAppointment.dart';
 class BookAppointment extends StatefulWidget {
   String organizationId;
   String organizationName;
+  Patient patient;
    BookAppointment({Key? key,required this.organizationId,
-                              required this.organizationName}) : super(key: key);
+                              required this.organizationName,
+                               required this.patient}) : super(key: key);
 
   @override
   State<BookAppointment> createState() => _BookAppointmentState();
@@ -101,7 +105,7 @@ class _BookAppointmentState extends State<BookAppointment> {
                     RaisedButton(
                       onPressed: () async {
 
-                        dynamic result = await DatabaseServiceAppointment()
+                        await DatabaseServiceAppointment()
                             .bookAppointment(Appointment.PatientInfo(
                                 patientId: currentUser!.uid,
                                 organizationId: widget.organizationId,
@@ -112,6 +116,9 @@ class _BookAppointmentState extends State<BookAppointment> {
                                 category: Category(name: category),
                                 status: 'waiting'  ));
 
+                        await DatabaseServiceNotification()
+                        .addAppointmentRequestNotify
+                          (widget.patient, widget.organizationId,name);
                           Fluttertoast.showToast(
                               msg: "Appointment Request Booked Successfully",
                               toastLength: Toast.LENGTH_SHORT,

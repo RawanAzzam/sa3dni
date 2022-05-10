@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:sa3dni_app/organization/notification.dart';
 import 'package:sa3dni_app/organization/organizationList.dart';
 import 'package:sa3dni_app/patient/chat.dart';
+import 'package:sa3dni_app/patient/notification.dart';
+import 'package:sa3dni_app/patient/organizationPosts.dart';
 import 'package:sa3dni_app/patient/patientProfile.dart';
 import 'package:sa3dni_app/patient/quizPage.dart';
 import 'package:sa3dni_app/patient/settings.dart';
@@ -44,7 +47,7 @@ class _PatientHomeState extends State<PatientHome> with TickerProviderStateMixin
         }
       }
     });
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     _tabController.animateTo(1);
   }
   @override
@@ -57,6 +60,10 @@ class _PatientHomeState extends State<PatientHome> with TickerProviderStateMixin
 
           FlatButton(
               onPressed:() {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) =>
+                const NotificationPatient(),
+                ));
               },
               child: const Icon(Icons.notifications,color: Colors.white,)
 
@@ -65,10 +72,12 @@ class _PatientHomeState extends State<PatientHome> with TickerProviderStateMixin
       ),
       body: TabBarView(
           controller: _tabController,
-          children: const [
-          OrganizationList(),
-          PatientProfile(),
-          ChatPage(),
+          children:  [
+            OrganizationPosts(category: patient !=  null ?
+            patient!.category.name : 'Smoking'),
+          const OrganizationList(),
+          const PatientProfile(),
+          const ChatPage(),
                 ]
       ),
        bottomNavigationBar:
@@ -78,6 +87,9 @@ class _PatientHomeState extends State<PatientHome> with TickerProviderStateMixin
            tabs: const [
              Tab(
                icon: Icon(Icons.home),
+             ),
+             Tab(
+               icon: Icon(Icons.group),
              ),
              Tab(
                icon: Icon(Icons.person),
@@ -114,7 +126,7 @@ class _PatientHomeState extends State<PatientHome> with TickerProviderStateMixin
                           letterSpacing: 3,
                           color: Colors.white
                         ),),
-                        SizedBox(height: 10,),
+                        const SizedBox(height: 10,),
                         Text(patient != null ?patient!.email : "email@gmail.com",
                           style: const TextStyle(
                               fontFamily: 'OpenSans',
@@ -131,7 +143,7 @@ class _PatientHomeState extends State<PatientHome> with TickerProviderStateMixin
                   onTap: (){
                     Navigator.pop(context);
                     Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) =>   AppointmentList(),
+                      builder: (context) =>   const AppointmentList(),
                     ));
 
                   },

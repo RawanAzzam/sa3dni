@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sa3dni_app/models/category.dart';
+import 'package:sa3dni_app/models/organization.dart';
 import 'package:sa3dni_app/models/patient.dart';
 import 'package:sa3dni_app/models/request.dart';
+import 'package:sa3dni_app/services/databaseServicesNotification.dart';
 import 'package:sa3dni_app/services/databaseServicesRequests.dart';
 
 import '../shared/constData.dart';
@@ -17,13 +19,34 @@ class RequestList extends StatefulWidget {
 
 class _RequestListState extends State<RequestList> {
   final currentUser = FirebaseAuth.instance.currentUser;
+  Organization? organization;
   List<Request> requests = <Request>[];
   List<Patient> patients = <Patient>[];
   @override
   void initState() {
     super.initState();
 
+    FirebaseFirestore.instance
+        .collection('organization')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      for (var doc in querySnapshot.docs) {
+        if(doc['id'].toString().contains(currentUser!.uid)) {
+          setState(() {
+          organization =
+              Organization(
+                  name: doc['name'],
+                  phoneNumber: doc['phoneNumber'],
+                  address: doc['address'],
+                  category: Category(name: doc['category']),
+                  email: doc['email'],
+                  id: doc['id'],
+                  image: doc['image']);
+        });
+        }
 
+      }
+    });
     FirebaseFirestore.instance
         .collection('patients')
         .get()
@@ -81,8 +104,11 @@ class _RequestListState extends State<RequestList> {
                                   const NetworkImage('https://icons.iconarchive.com/icons/icons8/ios7/512/Users-User-Male-icon.png'),
                                      backgroundColor: Colors.grey[200],
                                        ),
-                                    title: Text(getPatientName(userData['patientId'])!.name),
-                                    subtitle:Text('Category :' + getPatientName(userData['patientId'])!.category.name) ,
+                                    title: Text(getPatient(userData['patientId']) != null ?
+                                    getPatient(userData['patientId'])!.name : 'name'),
+                                    subtitle:Text('Category :' +(
+                                        getPatient(userData['patientId']) != null ?
+                                    getPatient(userData['patientId'])!.category.name : 'category')) ,
 
                                  ),
                                   Row(
@@ -94,6 +120,8 @@ class _RequestListState extends State<RequestList> {
                                             updateStatus(userData.id, 'accepted',
                                                 userData['patientId'],
                                                 userData['organizationID']);
+                                            await DatabaseServiceNotification()
+                                            .addConnectionAcceptNotify(organization!, userData['patientId']);
                                             setState(() {
 
                                             });
@@ -162,7 +190,7 @@ class _RequestListState extends State<RequestList> {
 
   }
 
-  Patient? getPatientName(String id){
+  Patient? getPatient(String id){
     for(Patient patient in patients) {
       if(patient.id == id) {
         return patient;

@@ -1,16 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sa3dni_app/models/organization.dart';
+import 'package:sa3dni_app/models/patient.dart';
 import 'package:sa3dni_app/patient/bookAppointment.dart';
 import 'package:sa3dni_app/patient/contactWithOrganization.dart';
 import 'package:sa3dni_app/patient/feedbackList.dart';
 import 'package:sa3dni_app/patient/showEvents.dart';
 import 'package:sa3dni_app/services/DatabaseServiceOrga.dart';
+import 'package:sa3dni_app/services/databaseServicesNotification.dart';
 import 'package:sa3dni_app/shared/constData.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sa3dni_app/shared/inputField.dart';
+import '../models/category.dart';
 import '../models/request.dart';
 import '../services/databaseServicesRequests.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -30,6 +33,7 @@ class ViewOrganizationProfile extends StatefulWidget {
 class _ViewOrganizationProfileState extends State<ViewOrganizationProfile> {
   int eventCount = 0;
   final currentUser = FirebaseAuth.instance.currentUser;
+  Patient? patient;
   List<Request> requests = [];
   List<Request> followers = [];
 
@@ -37,6 +41,23 @@ class _ViewOrganizationProfileState extends State<ViewOrganizationProfile> {
   @override
   void initState() {
     super.initState();
+    FirebaseFirestore.instance
+        .collection('patients')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      for (var doc in querySnapshot.docs) {
+        if (doc["id"].toString().contains(currentUser!.uid)) {
+          setState(() {
+            patient = Patient(
+                name: doc['name'],
+                email: doc['email'],
+                category: Category(name: doc['category']),
+                id: doc['id']);
+          });
+        }
+      }
+    });
+
     FirebaseFirestore.instance
         .collection('events')
         .get()
@@ -157,18 +178,27 @@ class _ViewOrganizationProfileState extends State<ViewOrganizationProfile> {
                           .contains('nothing') ||
                           getStatus(widget.organization.id)
                               .contains('rejected')) {
-                        await DatabaseServicesRequests()
+                         await DatabaseServicesRequests()
                             .addRequest(
                             currentUser!.uid, widget.organization.id);
-                        changeStatus();
+
+                       await  DatabaseServiceNotification()
+                             .addConnectionRequestNotify(patient!, widget.organization.id);
+                         changeStatus();
+
                       } else if (getStatus(widget.organization.id)
                           .contains('waiting') ||
                           getStatus(widget.organization.id)
                               .contains('accepted')) {
-                        await DatabaseServicesRequests()
+                     await DatabaseServicesRequests()
                             .deleteRequest(getId(widget.organization.id));
-                        changeStatus();
-                      }
+
+
+                       await  DatabaseServiceNotification()
+                             .removeConnectionRequest(patient!.id,widget.organization.id);
+                         changeStatus();
+                       }
+
                     },
                     icon: Icon(
                       getStatus(widget.organization.id).contains('waiting')
@@ -250,7 +280,9 @@ class _ViewOrganizationProfileState extends State<ViewOrganizationProfile> {
                             builder: (context) => BookAppointment(
                               organizationId: widget.organization.id,
                               organizationName: widget.organization.name,
+                              patient: patient!,
                             )));
+
                     }else{
                       Fluttertoast.showToast(
                           msg: "You Can Not Book Appointment if you are not following Organization",
@@ -422,22 +454,14 @@ class _ViewOrganizationProfileState extends State<ViewOrganizationProfile> {
                   });
                 }
               });
-              await DatabaseServiceOrga().updateInfo(widget.organization);
+              await DatabaseServiceOrga().
+              updateInfo(widget.organization);
               Navigator.pop(context);
             },
           child: const Text('Review'),
           color: ConstData().secColor,)
         ],
       ));
-  }
-  String getStatus(String organizationId) {
-    for (var request in requests) {
-      if (request.patientId == currentUser!.uid &&
-          request.organizationId == organizationId) {
-        return request.status;
-      }
-    }
-    return 'nothing';
   }
   String getId(String organizationId) {
     for (var request in requests) {
@@ -448,6 +472,16 @@ class _ViewOrganizationProfileState extends State<ViewOrganizationProfile> {
     }
     return '';
   }
+  String getStatus(String organizationId) {
+    for (var request in requests) {
+      if (request.patientId == currentUser!.uid &&
+          request.organizationId == organizationId) {
+        return request.status;
+      }
+    }
+    return 'nothing';
+  }
+
   void changeStatus() {
     requests = [];
     FirebaseFirestore.instance

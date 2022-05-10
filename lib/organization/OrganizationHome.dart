@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:sa3dni_app/organization/appointmentRequestList.dart';
 import 'package:sa3dni_app/organization/eventList.dart';
+import 'package:sa3dni_app/organization/notification.dart';
 import 'package:sa3dni_app/organization/organizationChat.dart';
 import 'package:sa3dni_app/organization/organizationProfile.dart';
+import 'package:sa3dni_app/organization/posts/postList.dart';
 import 'package:sa3dni_app/organization/requestList.dart';
 import 'package:sa3dni_app/services/authenticateService.dart';
 import 'package:sa3dni_app/shared/constData.dart';
@@ -30,9 +32,8 @@ class _OrganizationHomeState extends State<OrganizationHome>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _tabController.animateTo(1);
-
 
     FirebaseFirestore.instance
         .collection('requests')
@@ -85,7 +86,11 @@ class _OrganizationHomeState extends State<OrganizationHome>
         backgroundColor: ConstData().basicColor,
         actions: [
           FlatButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const NotificationOrganization(),
+                ));
+              },
               child: const Icon(
                 Icons.notifications,
                 color: Colors.white,
@@ -93,17 +98,19 @@ class _OrganizationHomeState extends State<OrganizationHome>
         ],
       ),
       body: TabBarView(controller: _tabController, children: const [
+        PostList(),
         OrganizationProfile(),
         OrganizationChat(),
       ]),
       bottomNavigationBar: TabBar(controller: _tabController, tabs: const [
         Tab(
+          icon: Icon(Icons.home),
+        ),
+        Tab(
           icon: Icon(Icons.person),
-          text: 'My Profile',
         ),
         Tab(
           icon: Icon(Icons.chat_bubble),
-          text: 'Chat',
         ),
       ]),
       drawer: Drawer(
@@ -122,49 +129,48 @@ class _OrganizationHomeState extends State<OrganizationHome>
                   return ListView.builder(
                       itemCount: snapshot.data?.docs.length,
                       itemBuilder: (context, index) {
-                    DocumentSnapshot userData =
-                    snapshot.data!.docs[index];
-if(userData['id'].toString().contains(currentUser!.uid)) {
-  return Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CircleAvatar(
-                              backgroundImage: NetworkImage(
-                          userData['image'])
-                          ,radius: 30,
-                              backgroundColor: Colors.white),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            userData['name'],
-                            style: const TextStyle(
-                                fontFamily: 'OpenSans',
-                                fontSize: 15,
-                                letterSpacing: 3,
-                                color: Colors.white),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                        userData['email'],
-                            style: const TextStyle(
-                                fontFamily: 'OpenSans',
-                                fontSize: 10,
-                                color: Colors.white),
-                          )
-                        ],
-                      ),
-                    );
-}
-else{
-  return SizedBox();
-}
-                  });
-
+                        DocumentSnapshot userData = snapshot.data!.docs[index];
+                        if (userData['id']
+                            .toString()
+                            .contains(currentUser!.uid)) {
+                          return Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CircleAvatar(
+                                    backgroundImage:
+                                        NetworkImage(userData['image']),
+                                    radius: 30,
+                                    backgroundColor: Colors.white),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  userData['name'],
+                                  style: const TextStyle(
+                                      fontFamily: 'OpenSans',
+                                      fontSize: 15,
+                                      letterSpacing: 3,
+                                      color: Colors.white),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  userData['email'],
+                                  style: const TextStyle(
+                                      fontFamily: 'OpenSans',
+                                      fontSize: 10,
+                                      color: Colors.white),
+                                )
+                              ],
+                            ),
+                          );
+                        } else {
+                          return SizedBox();
+                        }
+                      });
                 } else {
                   return Container(
                     padding: const EdgeInsets.only(top: 30),
@@ -288,7 +294,6 @@ else{
       )),
     );
   }
-
 
   @override
   void dispose() {

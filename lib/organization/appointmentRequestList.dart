@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sa3dni_app/models/category.dart';
 import 'package:sa3dni_app/services/databaseServiceAppointment.dart';
+import 'package:sa3dni_app/services/databaseServicesNotification.dart';
 import 'package:sa3dni_app/shared/constData.dart';
 import 'package:intl/intl.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -73,13 +74,14 @@ class _AppointmentRequestListState extends State<AppointmentRequestList> {
                               style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
                             color: const Color(0xFFDAEFEF),
                             padding: const EdgeInsets.fromLTRB(80, 13, 80, 13),
-                          )
+                          ),
+                          const Divider(height: 30,)
 
                         ],
                       ),
                     );
                   }else{
-                    return Divider(thickness: 0,);
+                    return const SizedBox();
                   }
 
                 }
@@ -118,154 +120,156 @@ class _AppointmentRequestListState extends State<AppointmentRequestList> {
   Widget selectDateAndTime(Appointment appointment,String docId){
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 70, 20, 0),
-      child: Container(
-        child: Column(
-          children: [
-            Row(children: [
-              GestureDetector(
-                child: Icon(
-                  Icons.date_range,
+      child: StatefulBuilder(
+        builder: (BuildContext context, StateSetter setSelectState) {
+          return Column(
+            children: [
+              Row(children: [
+                GestureDetector(
+                  child: Icon(
+                    Icons.date_range,
+                    size: 30.0,
+                    color: ConstData().basicColor,
+                  ),
+                  onTap: () async {
+                    final DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: date,
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime(2050));
+                    if (pickedDate != null && pickedDate != date) {
+                      setSelectState(() {
+                        date = pickedDate;
+                      });
+                    }
+                  },
+                ),
+                const SizedBox(
+                  width: 15.0,
+                ),
+                Container(
+                    padding: const EdgeInsets.all(8.0),
+                    color: Colors.grey[300],
+                    width: MediaQuery.of(context).size.width * 0.65,
+                    child: Text(
+                      DateFormat.yMd().format(date).toString(),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 15),
+                    ))
+              ]),
+              const SizedBox(
+                height: 30.0,
+              ),
+              Row(children: [
+                GestureDetector(
+                  child: Icon(
+                    Icons.access_time_outlined,
+                    size: 30.0,
+                    color: ConstData().basicColor,
+                  ),
+                  onTap: () async {
+                    final TimeOfDay? pickedTime = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.now(),
+                    );
+                    if (pickedTime != null && pickedTime != date) {
+                      setSelectState(() {
+                        time = pickedTime;
+                      });
+                    }
+
+                  },
+                ),
+                const SizedBox(
+                  width: 15.0,
+                ),
+                Container(
+                    padding: const EdgeInsets.all(8.0),
+                    color: Colors.grey[300],
+                    width: MediaQuery.of(context).size.width * 0.65,
+                    child: Text(
+                      MaterialLocalizations.of(context)
+                          .formatTimeOfDay(time),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 15),
+                    ))
+              ]),
+              const SizedBox(
+                height: 30.0,
+              ),
+              Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                Icon(
+                  Icons.description,
                   size: 30.0,
                   color: ConstData().basicColor,
                 ),
-                onTap: () {
-                  _selectDate(context);
-                },
-              ),
-              const SizedBox(
-                width: 15.0,
-              ),
-              Container(
-                  padding: const EdgeInsets.all(8.0),
-                  color: Colors.grey[300],
-                  width: MediaQuery.of(context).size.width * 0.65,
-                  child: Text(
-                    DateFormat.yMd().format(date).toString(),
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 15),
-                  ))
-            ]),
-            const SizedBox(
-              height: 30.0,
-            ),
-            Row(children: [
-              GestureDetector(
-                child: Icon(
-                  Icons.access_time_outlined,
-                  size: 30.0,
-                  color: ConstData().basicColor,
+                const SizedBox(
+                  width: 15.0,
                 ),
-                onTap: () {
-                  _selectTime(context);
-                },
-              ),
-              const SizedBox(
-                width: 15.0,
-              ),
-              Container(
-                  padding: const EdgeInsets.all(8.0),
-                  color: Colors.grey[300],
-                  width: MediaQuery.of(context).size.width * 0.65,
-                  child: Text(
-                    MaterialLocalizations.of(context)
-                        .formatTimeOfDay(time),
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 15),
-                  ))
-            ]),
-            const SizedBox(
-              height: 30.0,
-            ),
-            Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-              Icon(
-                Icons.description,
-                size: 30.0,
-                color: ConstData().basicColor,
-              ),
-              const SizedBox(
-                width: 15.0,
-              ),
-              Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(0.0, 0.0, 50.0, 0.0),
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                      hintText: "  Add Note",
+                Flexible(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0.0, 0.0, 50.0, 0.0),
+                    child: TextFormField(
+                      decoration: const InputDecoration(
+                        hintText: "  Add Note",
+                      ),
+                      onChanged: (value) => {
+                        setState((){
+                          note = value;
+                        })
+                      },
                     ),
-                    onChanged: (value) => {
-                      setState((){
-                        note = value;
-                      })
-                    },
                   ),
                 ),
+              ]),
+              const SizedBox(
+                height: 30.0,
               ),
-            ]),
-            const SizedBox(
-              height: 30.0,
-            ),
-            RaisedButton(
-              onPressed: () async{
+              RaisedButton(
+                onPressed: () async{
 
-               Appointment appintment = Appointment(
-                   patientId: appointment.patientId,
-                   patientName: appointment.patientName,
-                   email: appointment.email,
-                   phoneNumber: appointment.phoneNumber,
-                   organizationName: appointment.organizationName,
-                   organizationId: appointment.organizationId,
-                   category: appointment.category,
-                   time: time,
-                   date: date,
-                   docId: docId,
-                   status: 'confirm',
-                   note: note);
+                 Appointment appintment = Appointment(
+                     patientId: appointment.patientId,
+                     patientName: appointment.patientName,
+                     email: appointment.email,
+                     phoneNumber: appointment.phoneNumber,
+                     organizationName: appointment.organizationName,
+                     organizationId: appointment.organizationId,
+                     category: appointment.category,
+                     time: time,
+                     date: date,
+                     docId: docId,
+                     status: 'confirm',
+                     note: note);
 
-               dynamic result = await DatabaseServiceAppointment()
-               .confirmAppointment(appintment);
+                 await DatabaseServiceAppointment()
+                 .confirmAppointment(appintment);
 
+                await DatabaseServiceNotification()
+                 .addAppointmentConfirmNotify(appointment);
 
-
-                 Fluttertoast.showToast(
-                     msg: "Appointment Confirmed Successfully",
-                     toastLength: Toast.LENGTH_SHORT,
-                     gravity: ToastGravity.BOTTOM,
-                     backgroundColor: Colors.grey,
-                     textColor: Colors.white,
-                     fontSize: 16.0
-                 );
-               Navigator.pop(context);
+                   Fluttertoast.showToast(
+                       msg: "Appointment Confirmed Successfully",
+                       toastLength: Toast.LENGTH_SHORT,
+                       gravity: ToastGravity.BOTTOM,
+                       backgroundColor: Colors.grey,
+                       textColor: Colors.white,
+                       fontSize: 16.0
+                   );
+                 Navigator.pop(context);
 
 
-              },
-              child: const Text('Confirm Appointment',
-                  style: TextStyle(color: Colors.white)),
-              color: ConstData().basicColor,)
-          ],
-        ),
+                },
+                child: const Text('Confirm Appointment',
+                    style: TextStyle(color: Colors.white)),
+                color: ConstData().basicColor,)
+            ],
+          );
+        }
       ),
     );
   }
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
-        context: context,
-        initialDate: date,
-        firstDate: DateTime(2015),
-        lastDate: DateTime(2050));
-    if (pickedDate != null && pickedDate != date)
-      setState(() {
-        date = pickedDate;
-      });
-  }
 
-  Future<void> _selectTime(BuildContext context) async {
-    final TimeOfDay? pickedTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-    if (pickedTime != null && pickedTime != date)
-      setState(() {
-        time = pickedTime;
-      });
-  }
+
+
 }

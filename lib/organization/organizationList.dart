@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sa3dni_app/models/category.dart';
 import 'package:sa3dni_app/models/organization.dart';
 import 'package:sa3dni_app/patient/viewOrganizationProfile.dart';
+import 'package:sa3dni_app/services/databaseServicesNotification.dart';
 import 'package:sa3dni_app/services/databaseServicesRequests.dart';
 import 'package:sa3dni_app/shared/constData.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -148,11 +149,15 @@ class _OrganizationListState extends State<OrganizationList> {
                                         await DatabaseServicesRequests()
                                             .addRequest(
                                                 currentUser!.uid, userData.id);
+                                        await DatabaseServiceNotification()
+                                        .addConnectionRequestNotify(_patient!, userData['id']);
                                         changeStatus();
                                       } else if (getStatus(userData.id)
                                           .contains('waiting')) {
                                         await DatabaseServicesRequests()
                                             .deleteRequest(getId(userData.id));
+                                        await DatabaseServiceNotification()
+                                        .removeConnectionRequest(_patient!.id, userData['id']);
                                         changeStatus();
                                       }
                                     },

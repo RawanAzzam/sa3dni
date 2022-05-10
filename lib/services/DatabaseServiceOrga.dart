@@ -7,7 +7,6 @@ class DatabaseServiceOrga {
   final collectionOrga = FirebaseFirestore.instance.collection('organization');
   final collectionRate = FirebaseFirestore.instance.collection('rates');
 
-  final currentUser = FirebaseAuth.instance.currentUser;
 
   Future addOrganization(
       Organization organization, String id, String image) async {
