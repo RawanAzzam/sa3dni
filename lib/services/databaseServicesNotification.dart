@@ -1,5 +1,7 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sa3dni_app/models/appointment.dart';
+import 'package:sa3dni_app/models/event.dart';
 import 'package:sa3dni_app/models/organization.dart';
 import 'package:sa3dni_app/models/patient.dart';
 import 'package:intl/intl.dart';
@@ -78,7 +80,20 @@ class DatabaseServiceNotification {
       return null;
     }
   }
-
+  Future addPatientEventNotify(
+     OrganizationEvent event,String patientId) async {
+    try {
+      return await collectionNotification.doc('patientEvent').
+      collection('notification').add({
+        'patientId':patientId,
+        'message' : event.organizationName +
+            ' invites you to attend his event about '+event.category,
+        'time':DateTime.now()
+      });
+    } catch (e) {
+      return null;
+    }
+  }
 
 
 

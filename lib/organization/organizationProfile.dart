@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sa3dni_app/models/organization.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:sa3dni_app/organization/showFollowers.dart';
 import 'package:sa3dni_app/shared/constData.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import '../models/category.dart';
@@ -164,7 +165,7 @@ SizedBox(width: 30,),
                     ),
                     onTap: (){
                       Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => const ShowFollowing()));
+                          MaterialPageRoute(builder: (context) => const ShowFollowers()));
 
                     },
                   ),

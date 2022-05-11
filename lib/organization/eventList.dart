@@ -49,12 +49,41 @@ class _EventListState extends State<EventList> {
                     padding: const EdgeInsets.all(15.0),
                     child: Column(
                     children: [
-                    Text(
-                     userData['title'],
-                    style: const TextStyle(
-                    fontWeight: FontWeight.bold, fontSize: 20),
-                    textAlign: TextAlign.center,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Title : ',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w700, fontSize: 18),
+                          textAlign: TextAlign.center,
+                        ),
+                        Text(
+                         userData['title'],
+                        style: const TextStyle(
+                         fontSize: 18),
+                        textAlign: TextAlign.center,
+                        ),
+                      ],
                     ),
+                    SizedBox(height: 10,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Category : ',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w700, fontSize: 16),
+                            textAlign: TextAlign.center,
+                          ),
+                          Text(
+                            userData['category'],
+                            style: const TextStyle(
+                                fontSize: 16),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
                     const Divider(
                     height: 25,
                     indent: 20,
@@ -111,6 +140,7 @@ class _EventListState extends State<EventList> {
                     fontWeight: FontWeight.bold, fontSize: 15),
                     )
                     ]),
+
                     ],
                     ),
                     ],

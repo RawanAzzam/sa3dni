@@ -148,12 +148,11 @@ class _RegisterOrganizationState extends State<RegisterOrganization> {
                         RaisedButton(
                           onPressed: () async{
                             if(_keyForm.currentState!.validate()){
-                              Person? person = await  AuthenticateService().registerWithEmailAndPassword(email, password);
-                              if(person != null){
-                                User? user = FirebaseAuth.instance.currentUser;
+                              User? user = await  AuthenticateService().registerWithEmailAndPassword(email, password);
+                              if(user != null){
                                 Organization organization = Organization(name: name, phoneNumber: phoneNumber,
-                               address: address, category: widget.category,email: email,id:person.id,image: image);
-                                dynamic finalUser =  await  DatabaseServicePerson().addUser(user!, "organization");
+                               address: address, category: widget.category,email: email,id:user.uid,image: image);
+                                dynamic finalUser =  await  DatabaseServicePerson().addUser(user, "organization");
                                 dynamic data =  await  _databaseServiceOrga.addOrganization(organization,user.uid,image);
                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Wrapper()));
                          }

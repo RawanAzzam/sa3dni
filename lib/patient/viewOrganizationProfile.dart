@@ -127,9 +127,9 @@ class _ViewOrganizationProfileState extends State<ViewOrganizationProfile> {
                   children: [
                     Text(
                       widget.organization.name,
-                      style: const TextStyle(
+                      style:  TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 20,
+                        fontSize: widget.organization.name.length < 10 ? 20 : 13,
                       ),
                     ),
 

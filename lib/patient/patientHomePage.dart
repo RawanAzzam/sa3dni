@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:sa3dni_app/organization/notification.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:sa3dni_app/organization/organizationList.dart';
 import 'package:sa3dni_app/patient/chat.dart';
 import 'package:sa3dni_app/patient/notification.dart';
 import 'package:sa3dni_app/patient/organizationPosts.dart';
 import 'package:sa3dni_app/patient/patientProfile.dart';
 import 'package:sa3dni_app/patient/quizPage.dart';
-import 'package:sa3dni_app/patient/settings.dart';
+import 'package:sa3dni_app/patient/settings/settings.dart';
 import 'package:sa3dni_app/services/authenticateService.dart';
 import 'package:sa3dni_app/shared/constData.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -110,31 +110,67 @@ class _PatientHomeState extends State<PatientHome> with TickerProviderStateMixin
                   decoration: BoxDecoration(
                     color: ConstData().basicColor,
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                       const Image(image:const AssetImage('assets/logo.png'),
-                           width: 120,
-                           color: Colors.white),
-                        const SizedBox(height: 10,),
-                        Text(patient != null ?patient!.name : "name",
-                        style: const TextStyle(
-                          fontFamily: 'OpenSans',
-                          fontSize: 15,
-                          letterSpacing: 3,
-                          color: Colors.white
-                        ),),
-                        const SizedBox(height: 10,),
-                        Text(patient != null ?patient!.email : "email@gmail.com",
-                          style: const TextStyle(
-                              fontFamily: 'OpenSans',
-                              fontSize: 10,
-                              color: Colors.white
-                          ),)
-                      ],
-                    ),
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('patients')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return ListView.builder(
+                            itemCount: snapshot.data?.docs.length,
+                            itemBuilder: (context, index) {
+                              DocumentSnapshot userData = snapshot.data!.docs[index];
+                              if (userData['id']
+                                  .toString()
+                                  .contains(currentUser!.uid)) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Image(image:const AssetImage('assets/logo.png'),
+                                          width: 120,
+                                          color: Colors.white),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        userData['name'],
+                                        style: const TextStyle(
+                                            fontFamily: 'OpenSans',
+                                            fontSize: 15,
+                                            letterSpacing: 3,
+                                            color: Colors.white),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        userData['email'],
+                                        style: const TextStyle(
+                                            fontFamily: 'OpenSans',
+                                            fontSize: 10,
+                                            color: Colors.white),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              } else {
+                                return SizedBox();
+                              }
+                            });
+                      } else {
+                        return SpinKitFadingCircle(
+                          itemBuilder: (BuildContext context, int index) {
+                            return DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: index.isEven ? Colors.red : Colors.green,
+                              ),
+                            );
+                          },
+                        );
+                      }
+                    },
                   ),
                 ),
                 ListTile(

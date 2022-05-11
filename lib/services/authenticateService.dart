@@ -22,10 +22,7 @@ class AuthenticateService{
 
       UserCredential result = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
-      Person? person = getUserFromFirebase(user);
-      person?.setEmail(email);
-      person?.setPassword(password);
-      return person;
+      return user;
     }catch(e){
       return null;
     }

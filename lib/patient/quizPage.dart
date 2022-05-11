@@ -1,10 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sa3dni_app/models/patient.dart';
+import 'package:sa3dni_app/services/databaseServicesPatient.dart';
 import 'package:sa3dni_app/shared/constData.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import '../models/category.dart';
 class Quiz extends StatefulWidget {
   const Quiz({Key? key}) : super(key: key);
 
@@ -14,9 +18,11 @@ class Quiz extends StatefulWidget {
 
 class _QuizState extends State<Quiz> {
   final currentUser = FirebaseAuth.instance.currentUser;
-  String? category;
+  Patient? _patient;
   List<bool> countCheck = [];
   int? countCheckNum = 0;
+
+
   @override
   void initState() {
     super.initState();
@@ -30,7 +36,16 @@ class _QuizState extends State<Quiz> {
       for (var doc in querySnapshot.docs) {
         if (doc["id"].toString().contains(currentUser!.uid)) {
           setState(() {
-            category = doc['category'];
+            _patient = Patient(
+                name: doc['name'],
+                category: Category(name: doc['category']),
+                email: doc['email'],
+                id: doc['id']);
+            _patient!.phoneNumber = doc['phoneNumber'];
+            _patient!.image = doc['image'];
+            _patient!.address = doc['address'];
+            _patient!.contactPrivacy = doc['contactPrivacy'];
+            _patient!.addressPrivacy = doc['addressPrivacy'];
           });
         }
       }
@@ -43,7 +58,7 @@ class _QuizState extends State<Quiz> {
       appBar: AppBar(
         backgroundColor: ConstData().basicColor,
       ),
-      body: Column(
+      body: _patient != null ? Column(
         children: [
           Container(
             child: const Center(
@@ -64,7 +79,7 @@ class _QuizState extends State<Quiz> {
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('quizzes')
-                  .doc(category)
+                  .doc(_patient!.category.name)
                   .collection('questions')
                   .snapshots(),
               builder: (context, snapshot) {
@@ -120,7 +135,7 @@ class _QuizState extends State<Quiz> {
             height: 50,
             color: Colors.white,
             child:  RaisedButton(
-              onPressed: () {
+              onPressed: ()async {
                 int count  = 0;
                 for(bool flag in countCheck) {
                   if(flag) {
@@ -128,6 +143,8 @@ class _QuizState extends State<Quiz> {
                   }
                 }
                 double percent = count * 1.0 / countCheckNum!;
+                _patient!.level = (percent*100).toStringAsFixed(2)+'%';
+                await DatabaseServicePatient().updateLevel(_patient!);
                 Alert(context: context,
                    content:  CircularPercentIndicator(
                   radius: 60.0,
@@ -157,6 +174,14 @@ class _QuizState extends State<Quiz> {
               color: ConstData().basicColor,),
           )
         ],
+      ): SpinKitFadingCircle(
+        itemBuilder: (BuildContext context, int index) {
+          return DecoratedBox(
+            decoration: BoxDecoration(
+              color: index.isEven ? Colors.red : Colors.green,
+            ),
+          );
+        },
       ),
     );
   }

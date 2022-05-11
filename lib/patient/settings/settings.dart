@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sa3dni_app/patient/settings/personalInfoEditPatient.dart';
+import 'package:sa3dni_app/patient/settings/privacyAndPolicyPatient.dart';
 import 'package:sa3dni_app/shared/constData.dart';
 
 
@@ -63,7 +65,7 @@ class _SettingPageState extends State<SettingPage> {
               child: Row(
               children:  [
                 const SizedBox(width: 10,),
-                Icon(Icons.nightlight_round,color:ConstData().basicColor),
+                const Icon(Icons.nightlight_round,color:Colors.amberAccent),
                 const SizedBox(width: 10,),
                 buildPermissionOption('Dark Mood           ', val1, onChangeFunction1)
               ],
@@ -75,7 +77,7 @@ class _SettingPageState extends State<SettingPage> {
             Row(
               children:  [
                 const SizedBox(width: 10,),
-                Icon(Icons.notifications,color:ConstData().basicColor,),
+                const Icon(Icons.notifications,color:Colors.black,),
                 const SizedBox(width: 10,),
                 buildPermissionOption('Push Notification', val2, onChangeFunction2),
               ],
@@ -86,11 +88,68 @@ class _SettingPageState extends State<SettingPage> {
             Row(
               children:  [
                 const SizedBox(width: 10,),
-                Icon(Icons.location_on,color: ConstData().basicColor,),
+                const Icon(Icons.location_on,color: Colors.blue,),
                 const SizedBox(width: 10,),
                 buildPermissionOption('Access Location ', val3, onChangeFunction3),
               ],
             ),),
+            //// Personal Info
+            const SizedBox(height: 10,),
+
+            Padding(
+              padding:const EdgeInsets.symmetric(vertical: 1,horizontal: 5),
+              child:ListTile(
+                leading:Icon(Icons.info_outline,color: ConstData().basicColor,),
+                title: const Text(
+                  'Personal Info',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold
+                  ),),
+                trailing: const Icon(Icons.arrow_forward_ios_outlined),
+                onTap: (){
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const PersonalInfoEditPatient(),
+                  ));
+                },
+
+              ),
+            ),
+            const SizedBox(height: 10,),
+            Padding(
+              padding:const EdgeInsets.symmetric(vertical: 1,horizontal: 5),
+              child:ListTile(
+                leading:Icon(Icons.local_police,color: ConstData().basicColor,),
+                title: const Text(
+                  'Privacy & Policy',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold
+                  ),),
+                trailing: const Icon(Icons.arrow_forward_ios_outlined),
+                onTap: (){
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const PrivacyAndPolicyPatient(),
+                  ));
+                },
+
+              ),
+            ),
+            const SizedBox(height: 10,),
+            Padding(
+              padding:const EdgeInsets.symmetric(vertical: 1,horizontal: 5),
+              child:ListTile(
+                leading:Icon(Icons.help,color: ConstData().basicColor,),
+                title: const Text(
+                  'Help',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold
+                  ),),
+
+                onTap: (){
+
+                },
+
+              ),
+            ),
           ]
 
       ),

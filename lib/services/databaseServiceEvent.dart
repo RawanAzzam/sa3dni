@@ -11,6 +11,8 @@ class DatabaseServiceEvent{
     try{
       return await  collectionEvent.add({
         'organizationID':event.organizationID,
+        'organizationName':event.organizationName,
+        'category':event.category,
         'title' : event.title,
         'date' :   DateFormat.yMd().format(event.date).toString(),
         'time' : event.time.toString(),

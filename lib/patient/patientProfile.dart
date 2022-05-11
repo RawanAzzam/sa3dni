@@ -16,7 +16,7 @@ class PatientProfile extends StatefulWidget {
 
 class _ProfilePageState extends State<PatientProfile> {
 
-  Patient? patient;
+  Patient? _patient;
   final currentUser = FirebaseAuth.instance.currentUser;
   int connectionCount = 0;
   @override
@@ -30,11 +30,15 @@ class _ProfilePageState extends State<PatientProfile> {
       for (var doc in querySnapshot.docs) {
         if (doc["id"].toString().contains(currentUser!.uid)) {
           setState(() {
-            patient = Patient(
+            _patient = Patient(
                 name: doc['name'],
-                email: doc['email'],
                 category: Category(name: doc['category']),
+                email: doc['email'],
                 id: doc['id']);
+            _patient!.phoneNumber = doc['phoneNumber'];
+            _patient!.image = doc['image'];
+            _patient!.level = doc['level'];
+
           });
         }
       }
@@ -56,7 +60,7 @@ class _ProfilePageState extends State<PatientProfile> {
   }
   @override
   Widget build(BuildContext context) {
-    if(patient != null) {
+    if(_patient != null) {
       return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -72,7 +76,7 @@ class _ProfilePageState extends State<PatientProfile> {
                   ),
                 ),
                 Text(
-                  patient!.name,
+                  _patient!.name,
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20,
                       color: Colors.pink),
                 )
@@ -81,9 +85,12 @@ class _ProfilePageState extends State<PatientProfile> {
             const SizedBox(
               height: 25,
             ),
-            const CircleAvatar(
+             CircleAvatar(
               backgroundColor: Colors.white,
-              backgroundImage: NetworkImage('https://icons.iconarchive.com/icons/icons8/ios7/512/Users-User-Male-icon.png'),
+              backgroundImage: NetworkImage(
+                _patient!.image.isEmpty ?
+                  'https://icons.iconarchive.com/icons/icons8/ios7/512/Users-User-Male-icon.png'
+              :_patient!.image),
               radius: 60,
             ),
             const SizedBox(
@@ -104,7 +111,7 @@ class _ProfilePageState extends State<PatientProfile> {
                         const SizedBox(
                           width: 10,
                         ),
-                        Text(patient!.email),
+                        Text(_patient!.email),
 
                       ],
                     ),
@@ -127,7 +134,17 @@ class _ProfilePageState extends State<PatientProfile> {
                   children: [
                     const Text("Category",style: TextStyle(fontSize: 17,fontWeight: FontWeight.bold),),
                     const SizedBox(height: 15,),
-                    Text(patient!.category.name,style: const TextStyle(fontSize: 15),),
+                    Text(_patient!.category.name,style: const TextStyle(fontSize: 15),),
+                  ],
+                ),
+                const SizedBox(width: 50,),
+                Column(
+                  children: [
+                    const Text("Level",style: TextStyle(fontSize: 17,fontWeight: FontWeight.bold),),
+                    const SizedBox(height: 15,),
+                    Text(_patient!.level.isNotEmpty ?
+                    _patient!.level:'_'
+                      ,style: const TextStyle(fontSize: 15),),
                   ],
                 ),
                 const SizedBox(width: 50,),

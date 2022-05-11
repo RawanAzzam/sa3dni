@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:duration/duration.dart';
+import 'package:shimmer/shimmer.dart';
 class OrganizationPosts extends StatefulWidget {
   String category;
    OrganizationPosts({Key? key,
@@ -106,29 +107,72 @@ class _OrganizationPostsState extends State<OrganizationPosts> {
                   }
                 });
           } else {
-            return Container(
-              padding: const EdgeInsets.only(top: 30),
-              child: Card(
-                child: ListTile(
-                  title: Column(
-                    children: <Widget>[
-                      Icon(
-                        Icons.tag_faces,
-                        color: Theme.of(context).primaryColor,
-                        size: 35.0,
+            return Scaffold(
+              backgroundColor: Colors.white,
+              body:  Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 40.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    Expanded(
+                      child: Shimmer.fromColors(
+                        baseColor: Colors.grey,
+                        highlightColor: Colors.white,
+                        child: ListView.builder(
+                          itemBuilder: (_, __) => Padding(
+                            padding: const EdgeInsets.only(bottom: 15.0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Container(
+                                  width: 48.0,
+                                  height: 48.0,
+                                  color: Colors.white,
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Container(
+                                        width: double.infinity,
+                                        height: 8.0,
+                                        color: Colors.white,
+                                      ),
+                                      const Padding(
+                                        padding: EdgeInsets.symmetric(vertical: 2.0),
+                                      ),
+                                      Container(
+                                        width: double.infinity,
+                                        height: 8.0,
+                                        color: Colors.white,
+                                      ),
+                                      const Padding(
+                                        padding: EdgeInsets.symmetric(vertical: 2.0),
+                                      ),
+                                      Container(
+                                        width: 40.0,
+                                        height: 8.0,
+                                        color: Colors.white,
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          itemCount: 10,
+                        ),
                       ),
-                      const SizedBox(
-                        height: 5.0,
-                      ),
-                      const Text(
-                        "No Record Found",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 18.0, color: Colors.black87),
-                      ),
-                    ],
-                  ),
+                    ),
+
+                  ],
                 ),
               ),
+
             );
           }
         },

@@ -8,15 +8,15 @@ class Person{
    late Category category;
    late String phoneNumber;
    late String email;
-   late String password;
    late String id;
+   late String image;
 
    String type = '';
    StreamController<String> controller = StreamController<String>();
    Person.withNoParameter();
    Person({required this.id});
 
-   Person.withSingInInfo({required this.email ,required this.password });
+   Person.withSingInInfo({required this.email });
 
    Person.withPatientInfo({required this.name ,
      required this.email ,
@@ -37,9 +37,7 @@ class Person{
      this.email = email;
    }
 
-   void setPassword(String password){
-     this.password = password;
-   }
+
 
    void setType(String type){
      this.type = type;
