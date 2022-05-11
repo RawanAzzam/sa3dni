@@ -105,7 +105,7 @@ class _RegisterState extends State<Register> {
                              email: email,
                              category: widget.category,
                              id: user.uid));
-                              if(patient != null && role != null){
+                              if(role != null){
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => const VerifyByEmailPage()));
                                 Fluttertoast.showToast(
