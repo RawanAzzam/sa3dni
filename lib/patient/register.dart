@@ -99,7 +99,7 @@ class _RegisterState extends State<Register> {
                          dynamic role =
                          await  DatabaseServicePerson().addUser(user!, "patient");
 
-                         dynamic patient =
+
                          await DatabaseServicePatient().
                          addPatient(Patient(name: name,
                              email: email,
