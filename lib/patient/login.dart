@@ -6,6 +6,7 @@ import 'package:sa3dni_app/services/authenticateService.dart';
 import 'package:sa3dni_app/shared/inputField.dart';
 import 'package:sa3dni_app/shared/constData.dart';
 import 'package:sa3dni_app/wrapper.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 class SignIn extends StatefulWidget {
    Category category;
    SignIn({Key? key , required this.category}) : super(key: key);
@@ -94,6 +95,15 @@ class _SignInState extends State<SignIn> {
                             Navigator.of(context).pushReplacement(MaterialPageRoute(
                               builder: (context) => const Wrapper(),
                             ));
+                          }else{
+                            Fluttertoast.showToast(
+                                msg: "Your Email or Password is not correct",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                backgroundColor: Colors.grey,
+                                textColor: Colors.white,
+                                fontSize: 16.0
+                            );
                           }
 
                         }

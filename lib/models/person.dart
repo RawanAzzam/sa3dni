@@ -10,7 +10,7 @@ class Person{
    late String email;
    late String id;
    late String image;
-
+   late String  deviceToken;
    String type = '';
    StreamController<String> controller = StreamController<String>();
    Person.withNoParameter();

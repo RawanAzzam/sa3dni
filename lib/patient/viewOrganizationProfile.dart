@@ -183,7 +183,8 @@ class _ViewOrganizationProfileState extends State<ViewOrganizationProfile> {
                             currentUser!.uid, widget.organization.id);
 
                        await  DatabaseServiceNotification()
-                             .addConnectionRequestNotify(patient!, widget.organization.id);
+                             .addConnectionRequestNotify(patient!, widget.organization.id,
+                                                         widget.organization.deviceToken);
                          changeStatus();
 
                       } else if (getStatus(widget.organization.id)
@@ -278,8 +279,7 @@ class _ViewOrganizationProfileState extends State<ViewOrganizationProfile> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => BookAppointment(
-                              organizationId: widget.organization.id,
-                              organizationName: widget.organization.name,
+                            organization: widget.organization,
                               patient: patient!,
                             )));
 

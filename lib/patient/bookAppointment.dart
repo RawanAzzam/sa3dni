@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sa3dni_app/models/appointment.dart';
 import 'package:sa3dni_app/models/category.dart';
+import 'package:sa3dni_app/models/organization.dart';
 import 'package:sa3dni_app/models/patient.dart';
 import 'package:sa3dni_app/services/databaseServicesNotification.dart';
 import 'package:sa3dni_app/shared/constData.dart';
@@ -11,11 +12,9 @@ import 'package:sa3dni_app/shared/inputField.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sa3dni_app/services/databaseServiceAppointment.dart';
 class BookAppointment extends StatefulWidget {
-  String organizationId;
-  String organizationName;
+  Organization organization;
   Patient patient;
-   BookAppointment({Key? key,required this.organizationId,
-                              required this.organizationName,
+   BookAppointment({Key? key,required this.organization,
                                required this.patient}) : super(key: key);
 
   @override
@@ -108,8 +107,8 @@ class _BookAppointmentState extends State<BookAppointment> {
                         await DatabaseServiceAppointment()
                             .bookAppointment(Appointment.PatientInfo(
                                 patientId: currentUser!.uid,
-                                organizationId: widget.organizationId,
-                                organizationName: widget.organizationName,
+                                organizationId: widget.organization.id,
+                                organizationName: widget.organization.name,
                                 email: email,
                                 patientName: name,
                                 phoneNumber: phoneNumber,
@@ -118,7 +117,7 @@ class _BookAppointmentState extends State<BookAppointment> {
 
                         await DatabaseServiceNotification()
                         .addAppointmentRequestNotify
-                          (widget.patient, widget.organizationId,name);
+                          (widget.patient, widget.organization,name);
                           Fluttertoast.showToast(
                               msg: "Appointment Request Booked Successfully",
                               toastLength: Toast.LENGTH_SHORT,

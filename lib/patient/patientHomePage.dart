@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:sa3dni_app/organization/organizationList.dart';
@@ -8,12 +10,14 @@ import 'package:sa3dni_app/patient/patientProfile.dart';
 import 'package:sa3dni_app/patient/quizPage.dart';
 import 'package:sa3dni_app/patient/settings/settings.dart';
 import 'package:sa3dni_app/services/authenticateService.dart';
+import 'package:sa3dni_app/services/pushNotifications.dart';
 import 'package:sa3dni_app/shared/constData.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/patient.dart';
 import '../wrapper.dart';
-import 'package:sa3dni_app/models/category.dart';
+import 'package:sa3dni_app/models/category.dart' as C;
+
 
 import 'appointmentList.dart';
 class PatientHome extends StatefulWidget {
@@ -24,6 +28,12 @@ class PatientHome extends StatefulWidget {
 }
 
 class _PatientHomeState extends State<PatientHome> with TickerProviderStateMixin {
+
+
+
+
+
+
   final AuthenticateService _authenticateService = AuthenticateService();
   late TabController _tabController;
   Patient? patient;
@@ -31,7 +41,10 @@ class _PatientHomeState extends State<PatientHome> with TickerProviderStateMixin
   @override
   void initState() {
     super.initState();
-    FirebaseFirestore.instance
+
+     PushNotifications();
+
+   FirebaseFirestore.instance
         .collection('patients')
         .get()
         .then((QuerySnapshot querySnapshot) {
@@ -41,7 +54,7 @@ class _PatientHomeState extends State<PatientHome> with TickerProviderStateMixin
             patient = Patient(
                 name: doc['name'],
                 email: doc['email'],
-                category: Category(name: doc['category']),
+                category:C.Category(name: doc['category']),
                 id: doc['id']);
           });
         }
@@ -224,6 +237,7 @@ class _PatientHomeState extends State<PatientHome> with TickerProviderStateMixin
 
     );
   }
+
 
   @override
   void dispose() {

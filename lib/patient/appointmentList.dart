@@ -127,7 +127,7 @@ class _AppointmentListState extends State<AppointmentList> {
 
                       );
                     }else{
-                      return Divider(thickness: 0,);
+                      return SizedBox();
                     }
 
                   }

@@ -8,6 +8,8 @@ import 'package:sa3dni_app/services/databaseServicesNotification.dart';
 import 'package:sa3dni_app/shared/constData.dart';
 import 'package:intl/intl.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
+import '../models/patient.dart';
 class AppointmentRequestList extends StatefulWidget {
   const AppointmentRequestList({Key? key}) : super(key: key);
 
@@ -20,11 +22,31 @@ class _AppointmentRequestListState extends State<AppointmentRequestList> {
   String note = '';
   var date = DateTime.now();
   var time = TimeOfDay.now();
-
+  List<Patient> patients = <Patient>[];
   @override
   void initState() {
     super.initState();
 
+    FirebaseFirestore.instance
+        .collection('patients')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      for (var doc in querySnapshot.docs) {
+
+        setState(() {
+          Patient patient =
+          Patient(
+              name: doc['name'],
+              email: doc['email'],
+              category:Category(name: doc['category']),
+              id: doc['id']);
+          patient.deviceToken = doc['deviceToken'];
+          patients.add(patient);
+
+        });
+
+      }
+    });
   }
   @override
   Widget build(BuildContext context) {
@@ -42,7 +64,8 @@ class _AppointmentRequestListState extends State<AppointmentRequestList> {
                 itemBuilder: (context, index) {
                   DocumentSnapshot userData =
                   snapshot.data!.docs[index];
-                  if(userData['status'].toString().contains('waiting')){
+                  if(userData['status'].toString().contains('waiting')
+                     && userData['organizationId'].toString().contains(currentUser!.uid)){
                     count++;
                     return Padding(
                       padding: const EdgeInsets.all(20.0),
@@ -246,7 +269,7 @@ class _AppointmentRequestListState extends State<AppointmentRequestList> {
                  .confirmAppointment(appintment);
 
                 await DatabaseServiceNotification()
-                 .addAppointmentConfirmNotify(appointment);
+                 .addAppointmentConfirmNotify(appointment,getDeviceToken(appintment.patientId)!);
 
                    Fluttertoast.showToast(
                        msg: "Appointment Confirmed Successfully",
@@ -270,6 +293,13 @@ class _AppointmentRequestListState extends State<AppointmentRequestList> {
     );
   }
 
-
+  String? getDeviceToken(String id){
+    for(Patient patient in patients) {
+      if(patient.id == id) {
+        return patient.deviceToken;
+      }
+    }
+    return null;
+  }
 
 }

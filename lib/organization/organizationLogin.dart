@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sa3dni_app/organization/registerOrga.dart';
-
+import 'package:fluttertoast/fluttertoast.dart';
 import '../authenticate/resetPassword.dart';
 import '../models/category.dart';
 import '../services/authenticateService.dart';
@@ -101,6 +101,15 @@ class _OrganizationLoginState extends State<OrganizationLogin> {
                             Navigator.of(context).pushReplacement(MaterialPageRoute(
                               builder: (context) => const Wrapper(),
                             ));
+                          }else{
+                            Fluttertoast.showToast(
+                                msg: "Your Email or Password is not correct",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                backgroundColor: Colors.grey,
+                                textColor: Colors.white,
+                                fontSize: 16.0
+                            );
                           }
 
                         }

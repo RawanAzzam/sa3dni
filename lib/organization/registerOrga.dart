@@ -155,7 +155,16 @@ class _RegisterOrganizationState extends State<RegisterOrganization> {
                                 dynamic finalUser =  await  DatabaseServicePerson().addUser(user, "organization");
                                 dynamic data =  await  _databaseServiceOrga.addOrganization(organization,user.uid,image);
                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Wrapper()));
-                         }
+                         }else{
+                                Fluttertoast.showToast(
+                                    msg: "Your Email is not correct or is Already used",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.BOTTOM,
+                                    backgroundColor: Colors.grey,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0
+                                );
+                              }
 
                     }
                   },

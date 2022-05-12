@@ -54,11 +54,15 @@ class _RequestListState extends State<RequestList> {
       for (var doc in querySnapshot.docs) {
 
           setState(() {
-            patients.add(Patient(
+            Patient patient =
+            Patient(
                 name: doc['name'],
                 email: doc['email'],
                 category:Category(name: doc['category']),
-                id: doc['id']));
+                id: doc['id']);
+            patient.deviceToken = doc['deviceToken'];
+            patients.add(patient);
+
           });
 
       }
@@ -121,10 +125,10 @@ class _RequestListState extends State<RequestList> {
                                                 userData['patientId'],
                                                 userData['organizationID']);
                                             await DatabaseServiceNotification()
-                                            .addConnectionAcceptNotify(organization!, userData['patientId']);
-                                            setState(() {
+                                            .addConnectionAcceptNotify(organization!,
+                                                userData['patientId'],
+                                                 getDeviceToken(userData['patientId'])!);
 
-                                            });
                                           },
                                           child: const Text('Accept'),
                                         color: ConstData().secColor,
@@ -198,6 +202,15 @@ class _RequestListState extends State<RequestList> {
     }
     return null;
 
+  }
+
+  String? getDeviceToken(String id){
+    for(Patient patient in patients) {
+      if(patient.id == id) {
+        return patient.deviceToken;
+      }
+    }
+    return null;
   }
   }
 

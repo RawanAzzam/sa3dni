@@ -150,7 +150,8 @@ class _OrganizationListState extends State<OrganizationList> {
                                             .addRequest(
                                                 currentUser!.uid, userData.id);
                                         await DatabaseServiceNotification()
-                                        .addConnectionRequestNotify(_patient!, userData['id']);
+                                        .addConnectionRequestNotify(_patient!, userData['id']
+                                            ,userData['deviceToken']);
                                         changeStatus();
                                       } else if (getStatus(userData.id)
                                           .contains('waiting')) {
@@ -191,6 +192,8 @@ class _OrganizationListState extends State<OrganizationList> {
                                         email: userData['email'],
                                         id: userData['id'],
                                         image: userData['image']);
+                                    print(userData['deviceToken']);
+                                    organization.deviceToken = userData['deviceToken'];
                                     Navigator.of(context)
                                         .push(MaterialPageRoute(
                                       builder: (context) =>

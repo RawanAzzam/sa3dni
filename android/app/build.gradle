@@ -27,6 +27,9 @@ apply plugin: 'com.google.gms.google-services'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
+    aaptOptions {
+        cruncherEnabled = false
+    }
     compileSdkVersion flutter.compileSdkVersion
 
     compileOptions {

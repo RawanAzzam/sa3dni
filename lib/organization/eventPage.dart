@@ -71,6 +71,7 @@ class _EventPageState extends State<EventPage> {
                 category: Category(name: doc['category']),
                 id: doc['id']);
             patient.address = doc['address'];
+            patient.deviceToken = doc['deviceToken'];
             patients.add(patient);
           });
 
@@ -356,8 +357,17 @@ class _EventPageState extends State<EventPage> {
             patient.address.contains(event.location)){
           print('hi');
           await  DatabaseServiceNotification()
-            .addPatientEventNotify(event, patient.id);
+            .addPatientEventNotify(event, patient.id,getDeviceToken(patient.id)!);
         }
       }
+  }
+
+  String? getDeviceToken(String id){
+    for(Patient patient in patients) {
+      if(patient.id == id) {
+        return patient.deviceToken;
+      }
+    }
+    return null;
   }
 }
