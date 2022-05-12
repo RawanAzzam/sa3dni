@@ -99,12 +99,13 @@ class _RegisterState extends State<Register> {
                          dynamic role =
                          await  DatabaseServicePerson().addUser(user!, "patient");
 
-                          await DatabaseServicePatient().
+                         dynamic patient =
+                         await DatabaseServicePatient().
                          addPatient(Patient(name: name,
                              email: email,
                              category: widget.category,
                              id: user.uid));
-                              if( role != null){
+                              if(role != null){
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => const VerifyByEmailPage()));
                                 Fluttertoast.showToast(
