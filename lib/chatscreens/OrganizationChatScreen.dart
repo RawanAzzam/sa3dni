@@ -109,7 +109,6 @@ class _OrganizationChatScreenState extends State<OrganizationChatScreen> with Wi
           userMapsearch = value.docs[0].data();
           isLoading = false;
         });
-         // print(userMap);
       });
   }
 
@@ -124,23 +123,17 @@ class _OrganizationChatScreenState extends State<OrganizationChatScreen> with Wi
         userMap = value.docs[0].data();
         isLoading = false;
       });
-      // print(userMap);
     });
-
-
   }
 
   Patient? getPatient(String id){
-
     for(var patient in patients) {
       if(patient.id.contains(id)) {
         return patient;
       }
     }
-
     return null;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -225,55 +218,55 @@ class _OrganizationChatScreenState extends State<OrganizationChatScreen> with Wi
               endIndent: 15,
               indent: 15,
               thickness: 2,),
-            Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 10, 10, 0.0),
-                    child: SizedBox(
-                      height: 100,
-                      child: ListView.builder(
-                        itemCount: requests.length,
-                        itemBuilder: (context,index){
-                          return Padding(
-                            padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                            child: Row(
-                              children: [
-                                const CircleAvatar(
-                                  backgroundImage:
-                                  NetworkImage('https://icons.iconarchive.com/icons/icons8/ios7/512/Users-User-Male-icon.png'),
-                                  radius: 25,
-                                  backgroundColor: Colors.white,
-                                ),
-                                const SizedBox(width: 10,),
-
-                                TextButton(
-                                  onPressed: ()async {
-                                    await setusermap(requests[index].patientId);
-                                    String roomId = chatRoomId(
-                                        _organization!.id,
-                                        userMap!['name']);
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (_) =>
-                                            ChatRoom(
-                                              chatRoomId: roomId,
-                                              userMap: userMap!,
-                                            ),
-                                      ),
-                                    );
-                                  },
-                                  child:
-                                  Text(getPatient(requests[index].patientId)!.name),
-
-                                ),
-                              ],
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 10, 10, 0.0),
+                child:SingleChildScrollView(
+                  child: SizedBox(
+                  height: 400,
+                  child: ListView.builder(
+                    itemCount: requests.length,
+                    itemBuilder: (context,index){
+                      return Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 10, 10, 0.0),
+                        child: Row(
+                          children: [
+                            const CircleAvatar(
+                              backgroundImage:
+                              NetworkImage('https://icons.iconarchive.com/icons/icons8/ios7/512/Users-User-Male-icon.png'),
+                              radius: 25,
+                              backgroundColor: Colors.white,
                             ),
-                          );
-                        },
-                        // This next line does the trick.
-                        scrollDirection: Axis.vertical,
+                            const SizedBox(width: 10,),
+                            TextButton(
+                              onPressed: ()async {
+                                await setusermap(requests[index].patientId);
+                                String roomId = chatRoomId(
+                                    _organization!.id,
+                                    userMap!['name']);
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        ChatRoom(
+                                          chatRoomId: roomId,
+                                          userMap: userMap!,
+                                        ),
+                                  ),
+                                );
+                              },
+                              child:
+                              Text(getPatient(requests[index].patientId)!.name),
 
-                      ),
-                    ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    scrollDirection: Axis.vertical,
+
                   ),
+                ),
+                ),
+              ),
           ],
         ),
       );

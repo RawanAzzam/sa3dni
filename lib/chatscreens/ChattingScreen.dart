@@ -18,7 +18,7 @@ class ChattingScreen extends StatefulWidget {
 
 class _ChattingScreenState extends State<ChattingScreen> with WidgetsBindingObserver {
   Map<String, dynamic>? userMap ;
-  Map<String, dynamic>? userMapsearch;
+  Map<String, dynamic>? userMapSearch;
   bool isLoading = false;
   final TextEditingController _search = TextEditingController();
   Patient ? patient ;
@@ -155,7 +155,7 @@ class _ChattingScreenState extends State<ChattingScreen> with WidgetsBindingObse
         .get()
         .then((value) {
       setState(() {
-        userMapsearch = value.docs[0].data();
+        userMapSearch = value.docs[0].data();
         isLoading = false;
       });
       // print(userMap);
@@ -223,32 +223,32 @@ class _ChattingScreenState extends State<ChattingScreen> with WidgetsBindingObse
           SizedBox(
             height: size.height / 30,
           ),
-          userMapsearch != null
+          userMapSearch != null
               ? ListTile(
             onTap: () {
               String roomId = chatRoomId(
                   patient!.id,
-                  userMapsearch!['name']);
+                  userMapSearch!['name']);
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (_) =>
                       ChatRoom(
                         chatRoomId: roomId,
-                        userMap: userMapsearch!,
+                        userMap: userMapSearch!,
                       ),
                 ),
               );
             },
             leading: Icon(Icons.account_box, color: ConstData().basicColor),
             title: Text(
-              userMapsearch!['name'],
+              userMapSearch!['name'],
               style: const TextStyle(
                 color: Colors.black,
                 fontSize: 17,
                 fontWeight: FontWeight.w500,
               ),
             ),
-            subtitle: Text(userMapsearch!['email']),
+            subtitle: Text(userMapSearch!['email']),
             trailing: Icon(Icons.chat, color: ConstData().basicColor),
           )
               : Container(
@@ -259,58 +259,61 @@ class _ChattingScreenState extends State<ChattingScreen> with WidgetsBindingObse
             indent: 15,
             thickness: 2,),
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 10, 10, 0.0),
-            child: SizedBox(
-              height: 100,
-              child: ListView.builder(
-                itemCount: requests.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          backgroundImage: NetworkImage(
-                              getOrganization(requests[index].organizationId)!
-                                  .image),
-                        ),
-                        const SizedBox(width: 10,),
-                        TextButton(
-                          onPressed: ()async {
-                            // String name= await userMap!['name'];
-                            await setusermap(requests[index].organizationId);
+              padding: const EdgeInsets.fromLTRB(20, 10, 10, 0.0),
+              child:SingleChildScrollView(
+              child: SizedBox(
+                height: 400,
+                child: ListView.builder(
+                  itemCount: requests.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            backgroundImage: NetworkImage(
+                                getOrganization(requests[index].organizationId)!
+                                    .image),
+                          ),
+                          const SizedBox(width: 10,),
+                          TextButton(
+                            onPressed: ()async {
+                              // String name= await userMap!['name'];
+                              await setusermap(requests[index].organizationId);
                               String roomId = chatRoomId(
-                                  patient!.id,
+                                patient!.id,
                                 userMap!['name'],
-                                  );
+                              );
 
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                    builder: (_) =>
-                                        ChatRoom(
-                                          chatRoomId: roomId,
-                                          userMap: userMap!,
-                                        ),
+                                  builder: (_) =>
+                                      ChatRoom(
+                                        chatRoomId: roomId,
+                                        userMap: userMap!,
+                                      ),
                                 ),
                               );
 
-                          },
-                          child:
-                          Text(getOrganization(requests[index].organizationId)!
-                              .name),
+                            },
+                            child:
+                            Text(getOrganization(requests[index].organizationId)!
+                                .name),
 
-                        ),
+                          ),
 
-                      ],
-                    ),
-                  );
-                },
-                // This next line does the trick.
-                scrollDirection: Axis.vertical,
+                        ],
+                      ),
+                    );
+                  },
+                  // This next line does the trick.
+                  scrollDirection: Axis.vertical,
 
+                ),
               ),
             ),
-          ),
+            ),
+
         ],
       ),
     );
