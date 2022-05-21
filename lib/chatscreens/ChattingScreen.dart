@@ -188,7 +188,8 @@ class _ChattingScreenState extends State<ChattingScreen> with WidgetsBindingObse
           child: const CircularProgressIndicator(),
         ),
       )
-          : Column(
+          : SingleChildScrollView(
+      child : Column(
         children: [
           const SizedBox(
             height: 10,
@@ -316,6 +317,7 @@ class _ChattingScreenState extends State<ChattingScreen> with WidgetsBindingObse
 
         ],
       ),
+    ),
     );
     }
     else{

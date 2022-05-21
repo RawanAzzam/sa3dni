@@ -148,7 +148,8 @@ class _OrganizationChatScreenState extends State<OrganizationChatScreen> with Wi
             child: const CircularProgressIndicator(),
           ),
         )
-            : Column(
+            : SingleChildScrollView(
+          child :Column(
           children: [
             const SizedBox(
               height: 10,
@@ -211,14 +212,14 @@ class _OrganizationChatScreenState extends State<OrganizationChatScreen> with Wi
               subtitle: Text(userMapsearch!['email']),
               trailing: Icon(Icons.chat, color: ConstData().basicColor),
             )
-                : Container(
-            ),
+                : Container(),
             const Divider(height: 20,
               color:Color(0xFFDAEFEF),
               endIndent: 15,
               indent: 15,
               thickness: 2,),
-              Padding(
+            // SingleChildScrollView(
+             Padding(
                 padding: const EdgeInsets.fromLTRB(20, 10, 10, 0.0),
                 child:SingleChildScrollView(
                   child: SizedBox(
@@ -268,6 +269,7 @@ class _OrganizationChatScreenState extends State<OrganizationChatScreen> with Wi
                 ),
               ),
           ],
+          ),
         ),
       );
     }

@@ -28,12 +28,6 @@ class PatientHome extends StatefulWidget {
 }
 
 class _PatientHomeState extends State<PatientHome> with TickerProviderStateMixin {
-
-
-
-
-
-
   final AuthenticateService _authenticateService = AuthenticateService();
   late TabController _tabController;
   Patient? patient;
@@ -70,7 +64,6 @@ class _PatientHomeState extends State<PatientHome> with TickerProviderStateMixin
       appBar: AppBar(
         backgroundColor: ConstData().basicColor,
         actions: [
-
           FlatButton(
               onPressed:() {
                 Navigator.of(context).push(MaterialPageRoute(
@@ -200,7 +193,7 @@ class _PatientHomeState extends State<PatientHome> with TickerProviderStateMixin
                 ListTile(
                   leading: const Text(" ?",
                   style: TextStyle(fontSize: 25,color:Color(0xFF757575)),),
-                  title: const Text('Take a quiz'),
+                  title: const Text('Take a Screening'),
                   onTap: (){
                     Navigator.pop(context);
                     Navigator.of(context).push(MaterialPageRoute(

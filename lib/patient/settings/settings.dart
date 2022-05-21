@@ -12,27 +12,6 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-  bool val1= true;
-  bool val2= false;
-  bool val3= false;
-
-  onChangeFunction1(bool newValue1){
-    setState((){
-      val1= newValue1;
-    });
-  }
-
-  onChangeFunction2(bool newValue2){
-    setState((){
-      val2= newValue2;
-    });
-  }
-
-  onChangeFunction3(bool newValue3){
-    setState((){
-      val3= newValue3;
-    });
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,57 +21,6 @@ class _SettingPageState extends State<SettingPage> {
       ),
       body:ListView(
           children:[
-            const SizedBox(height: 10,),
-            Padding(
-              padding:const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
-              child: Row(
-                children:  [
-                const SizedBox(width: 10,),
-                Icon(Icons.accessibility,color: ConstData().basicColor,),
-                const SizedBox(width: 10,),
-                const Text(
-                  'Permissions',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold
-                  ),)
-              ],
-            ),
-      ),
-            const Divider(height: 20,thickness: 2,),
-            const SizedBox(height: 5,),
-            Padding(
-              padding:const EdgeInsets.symmetric(vertical: 1),
-              child: Row(
-              children:  [
-                const SizedBox(width: 10,),
-                const Icon(Icons.nightlight_round,color:Colors.amberAccent),
-                const SizedBox(width: 10,),
-                buildPermissionOption('Dark Mood           ', val1, onChangeFunction1)
-              ],
-            ),
-            ),
-            Padding(
-              padding:const EdgeInsets.symmetric(vertical: 1),
-              child:
-            Row(
-              children:  [
-                const SizedBox(width: 10,),
-                const Icon(Icons.notifications,color:Colors.black,),
-                const SizedBox(width: 10,),
-                buildPermissionOption('Push Notification', val2, onChangeFunction2),
-              ],
-            ),),
-            Padding(
-              padding:const EdgeInsets.symmetric(vertical: 1),
-              child:
-            Row(
-              children:  [
-                const SizedBox(width: 10,),
-                const Icon(Icons.location_on,color: Colors.blue,),
-                const SizedBox(width: 10,),
-                buildPermissionOption('Access Location ', val3, onChangeFunction3),
-              ],
-            ),),
             //// Personal Info
             const SizedBox(height: 10,),
 
