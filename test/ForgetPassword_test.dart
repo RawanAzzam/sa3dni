@@ -12,6 +12,7 @@ Future <void> main() async{
   firebaseApp = MockFirebaseApp();
  });
 
+
  test("reset Password", (){
   final tes=AuthenticateService().resetPassword("amani@gmail.com");
   final expVal="amani@gmail.com";
