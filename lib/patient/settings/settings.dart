@@ -39,7 +39,6 @@ class _SettingPageState extends State<SettingPage> {
                     builder: (context) => const PersonalInfoEditPatient(),
                   ));
                 },
-
               ),
             ),
             const SizedBox(height: 10,),
