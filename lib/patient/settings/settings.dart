@@ -76,39 +76,14 @@ class _SettingPageState extends State<SettingPage> {
 
                 onTap: (){
                    openFile(
-      url: 'https://firebasestorage.googleapis.com/v0/b/sa3dni-b9d90.appspot.com/o/Patient%20Manual.pdf?alt=media&token=27f07dcc-6b5f-4b21-b171-44c769e5b62e',
-                   fileName: 'guidebook.pdf');
-
-
+      url: 'https://firebasestorage.googleapis.com/v0/b/sa3dni-b9d90.appspot.com/o/Patient%20Guide.pdf?alt=media&token=de363f86-2b31-465a-98be-651c522508a6',
+                   fileName: 'patient_guide_book.pdf');
                 },
 
               ),
             ),
           ]
 
-      ),
-    );
-  }
-  Padding buildPermissionOption(String title,bool value, Function onChangeMethod){
-    return  Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8,horizontal: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(title,style: const TextStyle(fontSize: 15,fontWeight: FontWeight.w500),),
-          const SizedBox(width: 80),
-          Transform.scale(
-            scale: 0.7,
-            child:CupertinoSwitch(
-              activeColor: ConstData().basicColor,
-              trackColor: Colors.grey,
-              value: value,
-              onChanged: (bool newValue){
-                onChangeMethod(newValue);
-              },
-            ) ,
-          ),
-        ],
       ),
     );
   }

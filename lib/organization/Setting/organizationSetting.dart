@@ -9,8 +9,12 @@ import '../../models/category.dart';
 import '../../models/organization.dart';
 import '../../services/DatabaseServiceOrga.dart';
 import '../../shared/inputField.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:open_file/open_file.dart';
 import 'package:sa3dni_app/services/uploadFile.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:dio/dio.dart';
+import 'dart:io';
 
 class OrganizationSetting extends StatefulWidget {
   const OrganizationSetting({Key? key}) : super(key: key);
@@ -125,9 +129,9 @@ class _OrganizationSettingState extends State<OrganizationSetting> {
                 ),),
 
               onTap: (){
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const PersonalInfoEditOrganization(),
-                ));
+                openFile(
+                    url: 'https://firebasestorage.googleapis.com/v0/b/sa3dni-b9d90.appspot.com/o/Organization%20Guide.pdf?alt=media&token=da13b519-fe4c-4c7b-922f-1dc14de4757d',
+                    fileName: 'organization_guide_book.pdf');
               },
 
             ),
@@ -136,29 +140,39 @@ class _OrganizationSettingState extends State<OrganizationSetting> {
       ),
     );
   }
-  Padding buildPermissionOption(String title,bool value, Function onChangeMethod){
-    return  Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8,horizontal: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(title,style: const TextStyle(fontSize: 15,fontWeight: FontWeight.w500),),
-          const SizedBox(width: 80),
-          Transform.scale(
-            scale: 0.7,
-            child:CupertinoSwitch(
-              activeColor: ConstData().basicColor,
-              trackColor: Colors.grey,
-              value: value,
-              onChanged: (bool newValue){
-                onChangeMethod(newValue);
-              },
-            ) ,
-          ),
-        ],
-      ),
-    );
+
+
+  Future openFile({required String url,String? fileName}) async{
+    final file = await downloadFile(url, fileName!);
+
+    if(file == null) return;
+    print('Path :${file.path}');
+
+    OpenFile.open(file.path);
   }
 
+  Future<File?> downloadFile(String url,String name) async{
+    try {
+      final appStorge = await getApplicationDocumentsDirectory();
+      final file = File('${appStorge.path}/$name');
+
+      final response = await Dio().get(
+        url,
+        options: Options(
+            responseType: ResponseType.bytes,
+            followRedirects: false,
+            receiveTimeout: 0
+        ),
+      );
+
+      final raf = file.openSync(mode: FileMode.write);
+      raf.writeFromSync(response.data);
+      await raf.close();
+
+      return file;
+    }catch(e){
+      return null;
+    }
+  }
 
 }
