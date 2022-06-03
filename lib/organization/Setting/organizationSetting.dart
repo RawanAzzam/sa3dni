@@ -161,10 +161,8 @@ class _OrganizationSettingState extends State<OrganizationSetting> {
 
               onTap: (){
                 openFile(
-                    url:
-                    'https://firebasestorage.googleapis.com/v0/b/sa3dni-b9d90.appspot.com/o/Organization%20Guide.pdf?alt=media&token=da13b519-fe4c-4c7b-922f-1dc14de4757d',
-                    fileName:
-                    'organization_guide_book.pdf'
+                    url:'https://firebasestorage.googleapis.com/v0/b/sa3dni-b9d90.appspot.com/o/Organization%20Guide.pdf?alt=media&token=da13b519-fe4c-4c7b-922f-1dc14de4757d',
+                    fileName:'organization_guide_book.pdf'
                 );
               },
             ),

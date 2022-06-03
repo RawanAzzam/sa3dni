@@ -111,10 +111,8 @@ class _SettingPageState extends State<SettingPage> {
 
                 onTap: (){
                    openFile(
-                       url:
-                       'https://firebasestorage.googleapis.com/v0/b/sa3dni-b9d90.appspot.com/o/Patient%20Guide.pdf?alt=media&token=de363f86-2b31-465a-98be-651c522508a6',
-                       fileName:
-                       'patient_guide_book.pdf'
+                       url:'https://firebasestorage.googleapis.com/v0/b/sa3dni-b9d90.appspot.com/o/Patient%20Guide.pdf?alt=media&token=de363f86-2b31-465a-98be-651c522508a6',
+                       fileName:'patient_guide_book.pdf'
                    );
                 },
 
