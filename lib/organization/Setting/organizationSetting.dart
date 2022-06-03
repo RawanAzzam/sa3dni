@@ -7,12 +7,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../models/category.dart';
 import '../../models/organization.dart';
-import '../../services/DatabaseServiceOrga.dart';
-import '../../shared/inputField.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_file/open_file.dart';
 import 'package:sa3dni_app/services/uploadFile.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:dio/dio.dart';
 import 'dart:io';
 
@@ -69,6 +66,40 @@ class _OrganizationSettingState extends State<OrganizationSetting> {
       }
     });
   }
+
+  Future openFile({required String url,String? fileName}) async{
+    final file = await downloadFile(url, fileName!);
+
+    if(file == null) return;
+    print('Path :${file.path}');
+
+    OpenFile.open(file.path);
+  }
+
+  Future<File?> downloadFile(String url,String name) async{
+    try {
+      final appStorge = await getApplicationDocumentsDirectory();
+      final file = File('${appStorge.path}/$name');
+
+      final response = await Dio().get(
+        url,
+        options: Options(
+            responseType: ResponseType.bytes,
+            followRedirects: false,
+            receiveTimeout: 0
+        ),
+      );
+
+      final raf = file.openSync(mode: FileMode.write);
+      raf.writeFromSync(response.data);
+      await raf.close();
+
+      return file;
+    }catch(e){
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -130,10 +161,12 @@ class _OrganizationSettingState extends State<OrganizationSetting> {
 
               onTap: (){
                 openFile(
-                    url: 'https://firebasestorage.googleapis.com/v0/b/sa3dni-b9d90.appspot.com/o/Organization%20Guide.pdf?alt=media&token=da13b519-fe4c-4c7b-922f-1dc14de4757d',
-                    fileName: 'organization_guide_book.pdf');
+                    url:
+                    'https://firebasestorage.googleapis.com/v0/b/sa3dni-b9d90.appspot.com/o/Organization%20Guide.pdf?alt=media&token=da13b519-fe4c-4c7b-922f-1dc14de4757d',
+                    fileName:
+                    'organization_guide_book.pdf'
+                );
               },
-
             ),
           ),
         ],
@@ -142,37 +175,5 @@ class _OrganizationSettingState extends State<OrganizationSetting> {
   }
 
 
-  Future openFile({required String url,String? fileName}) async{
-    final file = await downloadFile(url, fileName!);
-
-    if(file == null) return;
-    print('Path :${file.path}');
-
-    OpenFile.open(file.path);
-  }
-
-  Future<File?> downloadFile(String url,String name) async{
-    try {
-      final appStorge = await getApplicationDocumentsDirectory();
-      final file = File('${appStorge.path}/$name');
-
-      final response = await Dio().get(
-        url,
-        options: Options(
-            responseType: ResponseType.bytes,
-            followRedirects: false,
-            receiveTimeout: 0
-        ),
-      );
-
-      final raf = file.openSync(mode: FileMode.write);
-      raf.writeFromSync(response.data);
-      await raf.close();
-
-      return file;
-    }catch(e){
-      return null;
-    }
-  }
 
 }
