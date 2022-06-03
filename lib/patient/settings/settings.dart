@@ -71,7 +71,8 @@ class _SettingPageState extends State<SettingPage> {
                   'Help',
                   style: TextStyle(
                       fontWeight: FontWeight.bold
-                  ),),
+                  ),
+                ),
 
                 onTap: (){
                    openFile(
