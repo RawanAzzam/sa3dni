@@ -45,7 +45,6 @@ class _PostListState extends State<PostList> {
       }
     });
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
