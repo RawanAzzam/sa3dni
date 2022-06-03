@@ -5,7 +5,7 @@ import '../../models/category.dart';
 import '../../models/organization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../../services/DatabaseServiceOrga.dart';
 import '../../services/uploadFile.dart';
 import '../../shared/inputField.dart';
@@ -18,15 +18,10 @@ class PrivacyAndPolicyOrganization extends StatefulWidget {
 
 class _PrivacyAndPolicyOrganizationState extends State<PrivacyAndPolicyOrganization> {
   Organization? _organization;
-  bool val1 = true;
+ bool contactPrivacy = false;
   final currentUser = FirebaseAuth.instance.currentUser;
   UploadFile uploadFile = UploadFile();
 
-  onChangeFunction1(bool newValue1) {
-    setState(() {
-      val1 = newValue1;
-    });
-  }
 
   @override
   void initState() {
@@ -50,7 +45,8 @@ class _PrivacyAndPolicyOrganizationState extends State<PrivacyAndPolicyOrganizat
                 email: doc['email'],
                 id: doc['id'],
                 image: doc['image']);
-
+                _organization!.contactPrivacy = doc['contactPrivacy'];
+                contactPrivacy = _organization!.contactPrivacy;
             _organization!.listOfRate = [];
             FirebaseFirestore.instance
                 .collection('rates')
@@ -72,12 +68,13 @@ class _PrivacyAndPolicyOrganizationState extends State<PrivacyAndPolicyOrganizat
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ConstData().basicColor,
         title: const Text('Settings'),
       ),
-      body: Padding(
+      body: _organization != null ? Padding(
         padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
         child: ListView(
           children: [
@@ -107,10 +104,13 @@ class _PrivacyAndPolicyOrganizationState extends State<PrivacyAndPolicyOrganizat
                   child: CupertinoSwitch(
                     activeColor: ConstData().basicColor,
                     trackColor: Colors.grey,
-                    value: val1,
+                    value: contactPrivacy,
                     onChanged: (bool newValue) {
-                      onChangeFunction1(newValue);
-                      print(val1);
+                      setState(() {
+                        contactPrivacy = newValue;
+                        DatabaseServiceOrga().updatePrivacy(_organization!, contactPrivacy);
+                      });
+
                     },
                   ),
                 ),
@@ -123,6 +123,14 @@ class _PrivacyAndPolicyOrganizationState extends State<PrivacyAndPolicyOrganizat
             ),
           ],
         ),
+      ): SpinKitFadingCircle(
+        itemBuilder: (BuildContext context, int index) {
+          return DecoratedBox(
+            decoration: BoxDecoration(
+              color: index.isEven ? Colors.red : Colors.green,
+            ),
+          );
+        },
       ),
     );
   }

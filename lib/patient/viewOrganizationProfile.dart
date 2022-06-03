@@ -302,11 +302,21 @@ class _ViewOrganizationProfileState extends State<ViewOrganizationProfile> {
                   ),
                   label: const Text('Contact'),
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>  ContactWithOrganization(organization: widget.organization,)));
-                  },
+                    widget.organization.contactPrivacy && widget.status == 'accepted'?
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>  ContactWithOrganization(organization: widget.organization,)))
+                         :  Fluttertoast.showToast(
+                    msg: "Can't contact with this Organization ...",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    backgroundColor: Colors.grey,
+                    textColor: Colors.white,
+                    fontSize: 16.0
+                    );
+
+                   },
                 ),
               ],
             ),

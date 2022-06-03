@@ -1,10 +1,12 @@
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sa3dni_app/patient/settings/personalInfoEditPatient.dart';
 import 'package:sa3dni_app/patient/settings/privacyAndPolicyPatient.dart';
 import 'package:sa3dni_app/shared/constData.dart';
-
-
+import 'package:path_provider/path_provider.dart';
+import 'package:open_file/open_file.dart';
 class SettingPage extends StatefulWidget {
   const SettingPage({Key? key}) : super(key: key);
   @override
@@ -69,9 +71,14 @@ class _SettingPageState extends State<SettingPage> {
                   'Help',
                   style: TextStyle(
                       fontWeight: FontWeight.bold
-                  ),),
+                  ),
+                ),
 
                 onTap: (){
+                   openFile(
+      url: 'https://firebasestorage.googleapis.com/v0/b/sa3dni-b9d90.appspot.com/o/Patient%20Manual.pdf?alt=media&token=27f07dcc-6b5f-4b21-b171-44c769e5b62e',
+                   fileName: 'guidebook.pdf');
+
 
                 },
 
@@ -104,6 +111,39 @@ class _SettingPageState extends State<SettingPage> {
         ],
       ),
     );
+  }
+
+  Future openFile({required String url,String? fileName}) async{
+    final file = await downloadFile(url, fileName!);
+
+    if(file == null) return;
+    print('Path :${file.path}');
+
+    OpenFile.open(file.path);
+  }
+
+  Future<File?> downloadFile(String url,String name) async{
+    try {
+      final appStorge = await getApplicationDocumentsDirectory();
+      final file = File('${appStorge.path}/$name');
+
+      final response = await Dio().get(
+        url,
+        options: Options(
+            responseType: ResponseType.bytes,
+            followRedirects: false,
+            receiveTimeout: 0
+        ),
+      );
+
+      final raf = file.openSync(mode: FileMode.write);
+      raf.writeFromSync(response.data);
+      await raf.close();
+
+      return file;
+    }catch(e){
+      return null;
+    }
   }
 
 }

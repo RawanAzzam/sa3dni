@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:sa3dni_app/authenticate/verificationPage.dart';
 import 'package:sa3dni_app/models/category.dart';
 import 'package:sa3dni_app/models/patient.dart';
-import 'package:sa3dni_app/models/person.dart';
 import 'package:sa3dni_app/services/authenticateService.dart';
 import 'package:sa3dni_app/services/databaseServicesPatient.dart';
 import 'package:sa3dni_app/shared/constData.dart';
 import 'package:sa3dni_app/shared/inputField.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:sa3dni_app/wrapper.dart';
 
 import '../services/databaseServicePerson.dart';
 class Register extends StatefulWidget {
