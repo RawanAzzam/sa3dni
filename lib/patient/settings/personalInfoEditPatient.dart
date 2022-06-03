@@ -96,9 +96,12 @@ class _PersonalInfoEditPatientState extends State<PersonalInfoEditPatient> {
                       return showUpdateField('Name');
 
                     }        );
-                    await DatabaseServicePatient().
-                    updatePatient(updateName(dataChanged));
-                    updateInfo();
+                    if(dataChanged.isNotEmpty){
+                      await DatabaseServicePatient().
+                      updatePatient(updateName(dataChanged));
+                      updateInfo();
+                    }
+
                   },
                 )),
             Padding(
@@ -142,26 +145,32 @@ class _PersonalInfoEditPatientState extends State<PersonalInfoEditPatient> {
                       return showUpdateField('Email');
 
                     }        );
-                    _patient!.email = dataChanged;
-                    await   showModalBottomSheet(context: context, builder: (context){
-                      return showUpdateField('Password');
+                    if(dataChanged.isNotEmpty){
+                      _patient!.email = dataChanged;
+                      await   showModalBottomSheet(context: context, builder: (context){
+                        return showUpdateField('Password');
 
-                    }        );
-                    String password = dataChanged;
-                    await currentUser!.updateEmail( _patient!.email);
-                    if(currentUser !=  null){
-                      await  currentUser!.reauthenticateWithCredential(
-                        EmailAuthProvider.credential(
-                          email:  _patient!.email,
-                          password: password,
-                        ),
-                      );
+                      }        );
+                      String password = dataChanged;
+                      await currentUser!.updateEmail( _patient!.email);
+                      if(currentUser !=  null){
+                        await  currentUser!.reauthenticateWithCredential(
+                          EmailAuthProvider.credential(
+                            email:  _patient!.email,
+                            password: password,
+                          ),
+                        );
+                    }
+
                     }else{
                       print('null');
 
                     }
-                    await DatabaseServicePatient().updatePatient(_patient!);
-                    updateInfo();
+                    if(dataChanged.isNotEmpty){
+                      await DatabaseServicePatient().updatePatient(_patient!);
+                      updateInfo();
+                    }
+
                   },
                 )
             ),
@@ -182,9 +191,12 @@ class _PersonalInfoEditPatientState extends State<PersonalInfoEditPatient> {
                       return showUpdateField('Phone Number');
 
                     }        );
-                    await DatabaseServicePatient().
-                    updatePatient(updatePhoneNumber(dataChanged));
-                    updateInfo();
+                    if(dataChanged.isNotEmpty){
+                      await DatabaseServicePatient().
+                      updatePatient(updatePhoneNumber(dataChanged));
+                      updateInfo();
+                    }
+
                   },
                 )),
             Padding(
@@ -204,9 +216,12 @@ class _PersonalInfoEditPatientState extends State<PersonalInfoEditPatient> {
                       return showUpdateField('Address');
 
                     }        );
-                    await DatabaseServicePatient().
-                    updatePatient(updateAddress(dataChanged));
-                    updateInfo();
+                    if(dataChanged.isNotEmpty){
+                      await DatabaseServicePatient().
+                      updatePatient(updateAddress(dataChanged));
+                      updateInfo();
+                    }
+
                   },
                 )),
           ],

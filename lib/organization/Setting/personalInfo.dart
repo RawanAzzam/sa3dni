@@ -40,8 +40,9 @@ class _PersonalInfoEditOrganizationState extends State<PersonalInfoEditOrganizat
                 category: Category(name: doc['category']),
                 email: doc['email'],
                 id: doc['id'],
-                image: doc['image']);
-
+                image: doc['image'],
+                 );
+             _organization!.contactPrivacy = doc['contactPrivacy'];
             _organization!.listOfRate = [];
             FirebaseFirestore.instance
                 .collection('rates')
@@ -104,8 +105,11 @@ class _PersonalInfoEditOrganizationState extends State<PersonalInfoEditOrganizat
                       return showUpdateField('Name');
 
                     }        );
-                    await DatabaseServiceOrga().updateInfo(updateName(dataChanged));
-                    updateInfo();
+                    if(dataChanged.isNotEmpty){
+                      await DatabaseServiceOrga().updateInfo(updateName(dataChanged));
+                      updateInfo();
+                    }
+
                   },
                 )),
             Padding(
@@ -147,20 +151,23 @@ class _PersonalInfoEditOrganizationState extends State<PersonalInfoEditOrganizat
                       return showUpdateField('Email');
 
                     }        );
-                    _organization!.email = dataChanged;
-                    await   showModalBottomSheet(context: context, builder: (context){
-                      return showUpdateField('Password');
+                    if(dataChanged.isNotEmpty){
+                      _organization!.email = dataChanged;
+                      await   showModalBottomSheet(context: context, builder: (context){
+                        return showUpdateField('Password');
 
-                    }        );
-                    String password = dataChanged;
-                    await currentUser!.updateEmail( _organization!.email);
-                    if(currentUser !=  null){
-                    await  currentUser!.reauthenticateWithCredential(
-                        EmailAuthProvider.credential(
-                          email:  _organization!.email,
-                          password: password,
-                        ),
-                      );
+                      }        );
+                      String password = dataChanged;
+                      await currentUser!.updateEmail( _organization!.email);
+                      if(currentUser !=  null){
+                        await  currentUser!.reauthenticateWithCredential(
+                          EmailAuthProvider.credential(
+                            email:  _organization!.email,
+                            password: password,
+                          ),
+                        );
+                    }
+
                     }else{
                       print('null');
 
@@ -187,9 +194,12 @@ class _PersonalInfoEditOrganizationState extends State<PersonalInfoEditOrganizat
                       return showUpdateField('Phone Number');
 
                     }        );
-                    await DatabaseServiceOrga().
-                    updateInfo(updatePhoneNumber(dataChanged));
-                    updateInfo();
+                    if(dataChanged.isNotEmpty){
+                      await DatabaseServiceOrga().
+                      updateInfo(updatePhoneNumber(dataChanged));
+                      updateInfo();
+                    }
+
                   },
                 )),
             Padding(
@@ -209,9 +219,12 @@ class _PersonalInfoEditOrganizationState extends State<PersonalInfoEditOrganizat
                       return showUpdateField('Address');
 
                     }        );
-                    await DatabaseServiceOrga().
-                    updateInfo(updateAddress(dataChanged));
-                    updateInfo();
+                    if(dataChanged.isNotEmpty){
+                      await DatabaseServiceOrga().
+                      updateInfo(updateAddress(dataChanged));
+                      updateInfo();
+                    }
+
                   },
                 )),
           ],

@@ -3,7 +3,6 @@ import 'package:sa3dni_app/models/person.dart';
 
 class Patient extends Person{
  bool addressPrivacy = false;
- bool contactPrivacy = false;
  String level = '';
   Patient({required String name ,
     required String email,

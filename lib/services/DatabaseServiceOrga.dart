@@ -20,7 +20,8 @@ class DatabaseServiceOrga {
           'id': organization.id,
           'image': image,
           'email': organization.email,
-        'deviceToken': token
+        'deviceToken': token,
+          'contactPrivacy':false
       });
     });
 
@@ -41,7 +42,33 @@ class DatabaseServiceOrga {
           'id': organization.id,
           'image': organization.image,
           'email': organization.email,
-          'deviceToken': token
+          'deviceToken': token,
+          'contactPrivacy':organization.contactPrivacy
+        });
+      });
+
+    }
+    catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+
+  Future updatePrivacy(Organization organization,bool privacy) async {
+    try {
+      return await  FirebaseMessaging.instance.getToken().then((token) {
+        collectionOrga.doc(organization.id).set({
+          'name': organization.name,
+          'address': organization.address,
+          'category': organization.category.name,
+          'phoneNumber': organization.phoneNumber,
+          'rate': organization.getRate().toString(),
+          'id': organization.id,
+          'image': organization.image,
+          'email': organization.email,
+          'deviceToken': token,
+          'contactPrivacy':privacy
         });
       });
 

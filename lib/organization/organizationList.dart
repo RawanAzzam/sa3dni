@@ -194,6 +194,7 @@ class _OrganizationListState extends State<OrganizationList> {
                                         image: userData['image']);
                                     print(userData['deviceToken']);
                                     organization.deviceToken = userData['deviceToken'];
+                                    organization.contactPrivacy = userData['contactPrivacy'];
                                     Navigator.of(context)
                                         .push(MaterialPageRoute(
                                       builder: (context) =>

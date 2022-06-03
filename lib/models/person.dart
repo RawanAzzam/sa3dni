@@ -12,6 +12,7 @@ class Person{
    late String image;
    late String  deviceToken;
    String type = '';
+   bool contactPrivacy = false;
    StreamController<String> controller = StreamController<String>();
    Person.withNoParameter();
    Person({required this.id});
