@@ -21,7 +21,8 @@ Future <void> main() async {
       (category.name = "Smoking") as Category;
       final ExpectedValue = null;
       expect(result, ExpectedValue);
-    }
-  });
 
+    }
+
+  });
 }

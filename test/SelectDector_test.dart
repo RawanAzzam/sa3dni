@@ -22,7 +22,6 @@ Future <void> main() async {
 
   });
 
-
   test("Select Dector", (){
     const ispw=true;
     final tes=SelectCategory(isPatient: ispw,);

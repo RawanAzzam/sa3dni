@@ -13,7 +13,6 @@ import 'package:sa3dni_app/Home/selectCategory.dart';
 
 Future <void> main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
 
  test("Select patitent Icon ",() {
    const isp=true;
@@ -23,9 +22,7 @@ Future <void> main() async{
    expect(result, expectedOutput);
  });
 
-
  //*****************************************************************************
-
 
  test("Select organization Icon ",() {
    const ispw=false;
@@ -34,6 +31,8 @@ Future <void> main() async{
    const expectedOutput=false;
    expect(result, expectedOutput);
  });
+
+
 
 
 

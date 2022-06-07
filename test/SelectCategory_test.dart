@@ -4,6 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 
 Future <void> main() async{
+
+
 test("Select one Category", ()
 {
   var category;
@@ -16,7 +18,6 @@ test("Select one Category", ()
 
   }
 });
-
 
 //*****************************************************************************
 
@@ -48,4 +49,18 @@ test("Select one Category", ()
 
   }
 });
+  test("Select one Category", ()
+  {
+    var category;
+    final tes = SelectCategory(isPatient: true,);
+    if (tes.isPatient == true) {
+      final result = tes.isPatient == true;
+      (category.name = "MobilePhone") as Category;
+      final ExpectedValue = "MobilePhone";
+      expect(result, ExpectedValue);
+
+    }
+  });
+
+
 }

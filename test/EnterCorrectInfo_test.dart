@@ -13,7 +13,6 @@ Future <void> main() async {
     firebaseApp = MockFirebaseApp();
   });
 
-
   test("Correct Info", (){
    const pass="123456";
    final tes=AuthenticateService().signInWithEmailAndPassword("amani@gmail.com", pass);
